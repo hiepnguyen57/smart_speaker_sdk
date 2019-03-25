@@ -1,8 +1,17 @@
+#ifndef DEVICE_CLIENT_SDK_COMMON_UTILS_LOGGER_LOG_H_
+#define DEVICE_CLIENT_SDK_COMMON_UTILS_LOGGER_LOG_H_
+
 #include <sstream>
 #include <string>
 #include <mutex>
 #include <iomanip>
 #include "Level.h"
+
+namespace deviveClientSDK {
+namespace common {
+namespace utils {
+namespace logger {
+
 
 //#define NDEBUG
 #ifdef NDEBUG
@@ -20,25 +29,28 @@
 #define LOG_CRITICAL  Log<OutputToFile>().Print(Level::CRITICAL)
 #endif
 
-// Convert date and time info from tm to a character string
-// in format "YYYY-mm-DD HH:MM:SS" and send it to a stream
+
+/*
+ * Convert date and time info from tm to a character string
+ * in format "YYYY-mm-DD HH:MM:SS" and send it to a stream
+ */
 std::ostream& operator<< (std::ostream& stream, const tm* tm)
 {
     // This section since GCC 4.8.1 did not implement std::put_time
-    // return stream << std::put_time(tm, "%Y-%m-%d %H:%M:%S");
-    return stream << 1900 + tm->tm_year << '-' <<
-    std::setfill('0') << std::setw(2) << tm->tm_mon + 1 << '-'
-    << std::setfill('0') << std::setw(2) << tm->tm_mday << ' '
-    << std::setfill('0') << std::setw(2) << tm->tm_hour << ':'
-    << std::setfill('0') << std::setw(2) << tm->tm_min << ':'
-    << std::setfill('0') << std::setw(2) << tm->tm_sec;
+    return stream << std::put_time(tm, "%Y-%m-%d %H:%M:%S");
+
+    // return stream << 1900 + tm->tm_year << '-' <<
+    // std::setfill('0') << std::setw(2) << tm->tm_mon + 1 << '-'
+    // << std::setfill('0') << std::setw(2) << tm->tm_mday << ' '
+    // << std::setfill('0') << std::setw(2) << tm->tm_hour << ':'
+    // << std::setfill('0') << std::setw(2) << tm->tm_min << ':'
+    // << std::setfill('0') << std::setw(2) << tm->tm_sec;
 }
 
 /*
  * Log class.
  * typename log_policy is output policy: stderr, stdout, OutputToFile, etc.
  */
-
 template <typename log_policy>
 class Log {
 public:
@@ -109,7 +121,9 @@ inline const tm* Log<log_policy>::getLocalTime() {
     return &mLocalTime;
 }
 
-
+/*
+ * OutputToFile class
+ */
 class OutputToFile {
 public:
     static FILE*& Stream();
@@ -147,3 +161,10 @@ inline void OutputToFile::Output(const std::string& msg)
 //  sprintf(result, "%s.%06ld", buffer, (long)tv.tv_usec / 1000); 
 //  return result;
 // }
+
+} // namespace logger
+} // namespace utils
+} // namespace common
+} // namespace deviceClientSDK
+
+#endif // DEVICE_CLIENT_SDK_COMMON_UTILS_LOGGER_LOG_H_

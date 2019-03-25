@@ -1,6 +1,12 @@
 #include <cassert>
 #include <unordered_map>
-#include "Level.h"
+#include "Common/Utils/Logger/Level.h"
+
+namespace deviveClientSDK {
+namespace common {
+namespace utils {
+namespace logger {
+
 
 #define LEVEL_TO_NAME(name) \
     case Level::name:       \
@@ -36,3 +42,8 @@ Level convertNameToLevel(const std::string& in) {
     }
     return Level::UNKNOWN;
 }
+
+} // namespace logger
+} // namespace utils
+} // namespace common
+} // namespace deviceClientSDK

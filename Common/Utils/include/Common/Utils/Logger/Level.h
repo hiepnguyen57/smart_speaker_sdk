@@ -1,5 +1,17 @@
+#ifndef DEVICE_CLIENT_SDK_COMMON_UTILS_LOGGER_LEVEL_H_
+#define DEVICE_CLIENT_SDK_COMMON_UTILS_LOGGER_LEVEL_H_
+
 #include <string.h>
 
+namespace deviveClientSDK {
+namespace common {
+namespace utils {
+namespace logger {
+
+
+/**
+ * Enum used to specify the severity assigned to a log message.
+ */
 enum class Level {
 	// Log of debugging operations.
 	DEBUG,
@@ -31,3 +43,10 @@ std::string convertLevelToName(Level level);
  * returns @c Level::UNKNOWN.
  */
 Level convertNameToLevel(const std::string& name);
+
+} // namespace logger
+} // namespace utils
+} // namespace common
+} // namespace deviceClientSDK
+
+#endif // DEVICE_CLIENT_SDK_COMMON_UTILS_LOGGER_LEVEL_H_
