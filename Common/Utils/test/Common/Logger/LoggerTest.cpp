@@ -3,7 +3,7 @@
 #include <memory>
 #include "Common/Utils/Logger/Log.h"
 
-#define TAG_LOGGER_TEST         "[LOGGER_TEST]\t"
+#define TAG_LOGGER_TEST         "[LoggerTest]\t"
 
 using namespace std;
 using namespace deviveClientSDK::common::utils::logger;

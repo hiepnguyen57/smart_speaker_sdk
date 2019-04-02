@@ -1,3 +1,7 @@
+#ifndef DEVICE_CLIENT_SDK_BLUETOOTH_BLUEZ_BLUEZCONSTANTS_H_
+#define DEVICE_CLIENT_SDK_BLUETOOTH_BLUEZ_BLUEZCONSTANTS_H_
+
+namespace deviveClientSDK {
 namespace bluetooth {
 namespace blueZ {
 
@@ -43,5 +47,8 @@ public:
     static constexpr auto PROPERTIES_INTERFACE = "org.freedesktop.DBus.Properties";   
 };
 
-}   //namespace blueZ
-}   //namespce bluetooth
+} // namespace blueZ
+} // namespce bluetooth
+} // namespace deviveClientSDK
+
+#endif // DEVICE_CLIENT_SDK_BLUETOOTH_BLUEZ_BLUEZCONSTANTS_H_

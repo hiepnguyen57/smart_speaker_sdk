@@ -1,15 +1,21 @@
+#ifndef DEVICE_CLIENT_SDK_BLUETOOTH_BLUEZ_DBUSCONNECTION_H_
+#define DEVICE_CLIENT_SDK_BLUETOOTH_BLUEZ_DBUSCONNECTION_H_
+
 #include <memory>
 #include <mutex>
 #include <vector>
 
 #include <gio/gio.h>
 
+namespace deviveClientSDK {
 namespace bluetooth {
 namespace blueZ {
+
+/**
+ * A wrapper around DBus connection object.
+ */
 class DBusConnection
 {
-private:
-    /* data */
 public:
     /**
      * Destructor.
@@ -40,12 +46,13 @@ public:
      * the destructor. For most of the cases we don't need the unsubscribing in runtime, so this is left undone now.
      */
     unsigned int subcribeToSignal(
-        const char *serviceName,
-        const char *interfaceName,
-        const char *member,
-        const char *firstArgumentFilter,
+        const char* serviceName,
+        const char* interfaceName,
+        const char* member,
+        const char* firstArgumentFilter,
         GDBusSignalCallback callback,
         gpointer userData);
+
     /**
      * Get @c GDBusConnection pointer
      *
@@ -58,14 +65,13 @@ public:
      */
     void close();
 
-};
 private:
     /**
      * Private constructor used in create() method.
      *
      * @param connection Raw @c GDBusConnection pointer to attach to.
      */
-    explicit DBusConnection(GDBusConnection *connection);
+    explicit DBusConnection(GDBusConnection* connection);
 
      /// Raw @c GDBusConnection* pointer used for operations
     GDBusConnection* m_connection;
@@ -75,6 +81,10 @@ private:
 
     /// Vector of ids of all signal subscriptions made for this connection
     std::vector<guint> m_subscriptions;   
+};
 
-} //namespace blueZ
-} //namespace bluetooth
+} // namespace blueZ
+} // namespace bluetooth
+} // namespace deviveClientSDK
+
+#endif // DEVICE_CLIENT_SDK_BLUETOOTH_BLUEZ_DBUSCONNECTION_H_
