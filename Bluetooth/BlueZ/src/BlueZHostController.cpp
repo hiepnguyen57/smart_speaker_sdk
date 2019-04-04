@@ -8,6 +8,8 @@ namespace deviceClientSDK {
 namespace bluetooth {
 namespace blueZ {
 
+using namespace common::utils::logger;
+
 #define TAG_BLUEZHOSTCONTROLLER             "BlueZHostController\t"
 
 // String to identify name property.
@@ -33,14 +35,14 @@ using namespace common::utils;
 // A fallback device name.
 static const std::string DEFAULT_NAME = "Device";
 
-static bool truncate(const std::unique<MacAddressString>& mac, std::string* truncateMac) {
+static bool truncate(const std::unique_ptr<MacAddressString>& mac, std::string* truncatedMac) {
     if(!mac) {
         LOG_ERROR << TAG_BLUEZHOSTCONTROLLER << "reason: nullMac";
         return false;
-    } else if(!truncateMac) {
+    } else if(!truncatedMac) {
         LOG_ERROR << TAG_BLUEZHOSTCONTROLLER << "reason: nullTruncatedMAC";
         return false;
-    } else if(mac=>getString().length() != MAC_SIZE){
+    } else if(mac->getString().length() != MAC_SIZE){
         LOG_ERROR << TAG_BLUEZHOSTCONTROLLER << "reason: invalidMACLenght";
         return false;
     }
@@ -95,7 +97,7 @@ bool BlueZHostController::init() {
 
     // Get the MAC address.
     std::string mac;
-    if(m_adapterProperties->getStringProperty(
+    if(!m_adapterProperties->getStringProperty(
         BlueZConstants::BLUEZ_ADAPTER_INTERFACE, BlueZConstants::BLUEZ_DEVICE_INTERFACE_ADDRESS, &mac)) {
         LOG_DEBUG << TAG_BLUEZHOSTCONTROLLER << "reason: noMACAddress";
         return false;
@@ -119,7 +121,7 @@ bool BlueZHostController::init() {
     return true;
 }
 
-std::string BlueZHostController::getMac() cosnt {
+std::string BlueZHostController::getMac() const {
     return m_mac->getString();
 }
 
@@ -145,7 +147,7 @@ std::future<bool> BlueZHostController::setDiscoverable(bool discoverable) {
     {
         std::lock_guard<std::mutex> lock(m_adapterMutex);
         success = m_adapterProperties->setProperty(
-            BlueZConstants::BLUEZ_ADAPTER_INTERFACE, DISCOVERABLE_PROPERTY, get_variant_new_boolean(discoverable));
+            BlueZConstants::BLUEZ_ADAPTER_INTERFACE, DISCOVERABLE_PROPERTY, g_variant_new_boolean(discoverable));
     }
 
     promise.set_value(success);

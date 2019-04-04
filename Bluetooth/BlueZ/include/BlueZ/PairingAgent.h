@@ -20,7 +20,7 @@ public:
     virtual ~PairingAgent();
 
     // Create an instance of the PairingAgent.
-    std::unique_ptr<PairingAgent> create(std::shared_ptr<DBusConnection> connection);
+    static std::unique_ptr<PairingAgent> create(std::shared_ptr<DBusConnection> connection);
 
 private:
     // Constructor.

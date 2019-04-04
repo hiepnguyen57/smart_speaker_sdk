@@ -9,9 +9,16 @@ namespace threading {
 
 #define TAG_TASKTHREAD          "TaskThread\t"
 
-using namespace deviveClientSDK::common::utils::logger;
+using namespace logger;
 
 TaskThread::TaskThread() : m_alreadyStarting{false}, m_moniker{ThreadMoniker::generateMoniker()} {
+}
+
+TaskThread::~TaskThread() {
+    m_stop = true;
+    if(m_thread.joinable()) {
+        m_thread.join();
+    }
 }
 
 bool TaskThread::start(std::function<bool()> jobRunner) {

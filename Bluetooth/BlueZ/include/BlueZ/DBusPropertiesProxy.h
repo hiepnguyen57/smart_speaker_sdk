@@ -30,7 +30,7 @@ public:
     bool getBooleanProperty(const std::string& interface, const std::string& property, bool* result);
 
     // Get value of the interface's string property.
-    bool getStringProperty(const std::string& interface, const std::string& property, std::string& result);
+    bool getStringProperty(const std::string& interface, const std::string& property, std::string* result);
 
     // Get value of the interface's variant property.
     bool getVariantProperty(const std::string& interface, const std::string& property, ManagedGVariant* result);

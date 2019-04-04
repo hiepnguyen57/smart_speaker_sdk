@@ -13,6 +13,7 @@ namespace blueZ {
 
 using namespace common::sdkInterfaces::bluetooth::services;
 using namespace common::utils::bluetooth;
+using namespace common::utils::logger;
 
 #define TAG_MPRISPLAYER         "MPRISPlayer\t"
 
@@ -156,7 +157,6 @@ bool MPRISPlayer::init() {
 }
 
 MPRISPlayer::~MPRISPlayer() {
-    ACSDK_DEBUG5(LX(__func__));
     unregisterPlayer();
 }
 

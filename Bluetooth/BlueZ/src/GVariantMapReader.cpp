@@ -6,6 +6,8 @@ namespace deviceClientSDK {
 namespace bluetooth {
 namespace blueZ {
 
+using namespace common::utils::logger;
+
 #define TAG_GVARIANTMAPREADER           "GVariantMapReader\t"
 
 bool GVariantMapReader::forEach(std::function<bool(char* key, GVariant* value)> iteratorFunction) const {
@@ -70,9 +72,12 @@ bool GVariantMapReader::getCString(const char* name, char** value) const {
     return g_variant_lookup(m_map, name, "&s", value) != 0;
 }
 
+
 bool GVariantMapReader::getInt32(const char* name, gint32* value) const {
     if (nullptr == m_map) {
         LOG_ERROR << TAG_GVARIANTMAPREADER << "getInt32Failed, reason: m_map is null";
+        return false;
+    }
     if (nullptr == name) {
         LOG_ERROR << TAG_GVARIANTMAPREADER << "getInt32Failed, reason: name is null";
         return false;
@@ -83,6 +88,7 @@ bool GVariantMapReader::getInt32(const char* name, gint32* value) const {
     }
     return g_variant_lookup(m_map, name, "i", value) != 0;
 }
+
 
 bool GVariantMapReader::getBoolean(const char* name, gboolean* value) const {
     if (nullptr == m_map) {

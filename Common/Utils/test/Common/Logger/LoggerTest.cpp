@@ -6,7 +6,8 @@
 #define TAG_LOGGER_TEST         "[LoggerTest]\t"
 
 using namespace std;
-using namespace deviveClientSDK::common::utils::logger;
+using namespace deviceClientSDK::common::utils::logger;
+
 // the thread function
 void threadFunc(int id)
 {

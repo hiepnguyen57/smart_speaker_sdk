@@ -6,7 +6,7 @@ namespace common {
 namespace utils {
 namespace bluetooth {
 
-using namespace deviveClientSDK::common::utils::logger;
+using namespace logger;
 
 #define TAG_FORMATTEDAUDIO          "FormattedAudioStreamAdapter\t"
 

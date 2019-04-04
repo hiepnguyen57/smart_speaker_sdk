@@ -2,7 +2,7 @@
 #include <unordered_map>
 #include "Common/Utils/Logger/Level.h"
 
-namespace deviveClientSDK {
+namespace deviceClientSDK {
 namespace common {
 namespace utils {
 namespace logger {

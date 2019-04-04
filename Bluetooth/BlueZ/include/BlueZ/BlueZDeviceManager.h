@@ -20,7 +20,7 @@
 
 #include <gio/gio.h>
 
-namespace deviveClientSDK {
+namespace deviceClientSDK {
 namespace bluetooth {
 namespace blueZ {
 
@@ -62,7 +62,7 @@ public:
 
 private:
     // Constructor
-    explicit BlueZDeviceManager(const std:::shared_ptr<common::utils::bluetooth::BluetoothEventBus>& eventBus);
+    explicit BlueZDeviceManager(const std::shared_ptr<common::utils::bluetooth::BluetoothEventBus>& eventBus);
 
     bool init();
 
@@ -141,6 +141,9 @@ private:
     // Retrieves the current state from BlueZ service and updates internal state accordingly.
     bool getStateFromBlueZ();
 
+    // Get known device by its DBus object path
+    std::shared_ptr<BlueZBluetoothDevice> getDeviceByPath(const std::string& path) const;
+
     // Thread procedure to setup and handle GLib events.
     void mainLoopThread();
 
@@ -195,6 +198,6 @@ private:
 
 } // namespace blueZ
 } // namespce bluetooth
-} // namespace deviveClientSDK
+} // namespace deviceClientSDK
 
 #endif // DEVICE_CLIENT_SDK_BLUETOOTH_BLUEZ_BLUEZDEVICEMANAGER_H_

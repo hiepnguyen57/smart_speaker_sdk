@@ -23,9 +23,9 @@ namespace blueZ {
  * @endcode
  */
 template <class T>
-class DBusObject: public DBusObjectBase {
+class DBusObject : public DBusObjectBase {
 public:
-    virtual ~DBusObjectBase() = default;
+    virtual ~DBusObject() = default;
 
     //Callback type to be used by member functions handling DBus method calls.
     using commandHandler_t = void (T::*)(GVariant* parameters, GDBusMethodInvocation* invocation);
@@ -38,7 +38,7 @@ protected:
         std::shared_ptr<DBusConnection> connection,
         std::string xmlInterfaceIntrospection,
         std::string objectPath,
-        std::unordered_map<std::string, commandHandler_t> medthodMap) : 
+        std::unordered_map<std::string, commandHandler_t> methodMap) : 
         DBusObjectBase(connection, xmlInterfaceIntrospection, objectPath, &onMethodCallStatic),
         m_commands{methodMap} {
     }
@@ -46,7 +46,7 @@ protected:
 private:
     // static method used as a callback to subcribe to DBus method calls for the object.
     static void onMethodCallStatic(
-        getGDBusConnection* conn,
+        GDBusConnection* conn,
         const gchar* sender_name,
         const gchar* object_path,
         const gchar* inteface_name,

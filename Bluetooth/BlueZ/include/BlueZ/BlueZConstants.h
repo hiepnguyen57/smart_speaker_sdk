@@ -1,7 +1,7 @@
 #ifndef DEVICE_CLIENT_SDK_BLUETOOTH_BLUEZ_BLUEZCONSTANTS_H_
 #define DEVICE_CLIENT_SDK_BLUETOOTH_BLUEZ_BLUEZCONSTANTS_H_
 
-namespace deviveClientSDK {
+namespace deviceClientSDK {
 namespace bluetooth {
 namespace blueZ {
 
@@ -49,6 +49,6 @@ public:
 
 } // namespace blueZ
 } // namespce bluetooth
-} // namespace deviveClientSDK
+} // namespace deviceClientSDK
 
 #endif // DEVICE_CLIENT_SDK_BLUETOOTH_BLUEZ_BLUEZCONSTANTS_H_

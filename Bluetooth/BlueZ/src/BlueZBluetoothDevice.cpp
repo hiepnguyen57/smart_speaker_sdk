@@ -17,6 +17,7 @@ using namespace common::utils;
 using namespace common::utils::bluetooth;
 using namespace common::sdkInterfaces::bluetooth;
 using namespace common::sdkInterfaces::bluetooth::services;
+using namespace common::utils::logger;
 
 #define TAG_BLUEZBLUETOOTHDEVICE            "BlueZBluetoothDevice\t"
 
@@ -86,13 +87,13 @@ std::string BlueZBluetoothDevice::getMac() const {
     return m_mac;
 }
 
-std::string BlueZBluetoothDevice::getFriendlyName() {
+std::string BlueZBluetoothDevice::getFriendlyName() const {
     return m_friendlyName;
 }
 
 bool BlueZBluetoothDevice::updateFriendlyName() {
     if(!m_propertiesProxy->getStringProperty(
-        BlueZConstants::BLUEZ_DEVICE_INTERFACE, BLUEZ_DEVICE_INTERFACE_ALIAS, &m_friendlyName)) {
+        BlueZConstants::BLUEZ_DEVICE_INTERFACE, BLUEZ_DEVICE_PROPERTY_ALIAS, &m_friendlyName)) {
         LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "reason: getNameFailed";
         return false;
     }
@@ -149,7 +150,7 @@ bool BlueZBluetoothDevice::initializeServices(const std::unordered_set<std::stri
                 return false;
             } else {
                 a2dpSource->setup();
-                insertService(a2dpSource);
+                //insertService(a2dpSource);
             }
         } else if(AVRCPTargetInterface::UUID == uuid && !serviceExists(uuid)) {
             auto mediaControlProxy = DBusProxy::create(MEDIA_CONTROL_INTERFACE, m_objectPath);
@@ -164,7 +165,7 @@ bool BlueZBluetoothDevice::initializeServices(const std::unordered_set<std::stri
                 return false;
             } else {
                 avrcpTarget->setup();
-                insertService(avrcpTarget);
+                //insertService(avrcpTarget);
             }
         } else if(A2DPSinkInterface::UUID == uuid && !serviceExists(uuid)) {
             auto a2dpSink = BlueZA2DPSink::create();
@@ -173,7 +174,7 @@ bool BlueZBluetoothDevice::initializeServices(const std::unordered_set<std::stri
                 return false;
             } else {
                 a2dpSink->setup();
-                insertService(a2dpSink);
+                //insertService(a2dpSink);
             }
         } else if(AVRCPControllerInterface::UUID == uuid && !serviceExists(uuid)) {
             auto avrcpController = BlueZAVRCPController::create();
@@ -182,14 +183,14 @@ bool BlueZBluetoothDevice::initializeServices(const std::unordered_set<std::stri
                 return false;
             } else {
                 avrcpController->setup();
-                insertService(avrcpController);
+                //insertService(avrcpController);
             }           
         }
     }
     return true;
 }
 
-BlueZBluetoothDevice::isPaired() {
+bool BlueZBluetoothDevice::isPaired() {
     auto future = m_executor.submit([this] { return executeIsPaired(); });
     if(future.valid()) {
         return future.get();
@@ -311,6 +312,10 @@ bool BlueZBluetoothDevice::isConnected() {
 
 bool BlueZBluetoothDevice::executeIsConnected() {
     return BlueZDeviceState::CONNECTED == m_deviceState;
+}
+
+std::future<bool> BlueZBluetoothDevice::connect() {
+    return m_executor.submit([this] { return executeConnect(); });
 }
 
 bool BlueZBluetoothDevice::executeConnect() {

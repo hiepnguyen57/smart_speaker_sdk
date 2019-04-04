@@ -7,13 +7,15 @@ namespace deviceClientSDK {
 namespace bluetooth {
 namespace blueZ {
 
+using namespace common::utils::logger;
+
 #define TAG_DBUSCONNECTION          "DBusConnection\t"
 
 GDBusConnection* DBusConnection::getGDBusConnection() {
     return m_connection;
 }
 
-std::unique_ptr<DBusConnection> DBusConnection::create(GDBusType connectionType) {
+std::unique_ptr<DBusConnection> DBusConnection::create(GBusType connectionType) {
     ManagedGError error;
 
     GDBusConnection *connection = g_bus_get_sync(connectionType, nullptr, error.toOutputParameter());

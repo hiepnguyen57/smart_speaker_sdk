@@ -22,6 +22,7 @@ using namespace common::sdkInterfaces::bluetooth;
 using namespace common::sdkInterfaces::bluetooth::services;
 using namespace common::utils;
 using namespace common::utils::bluetooth;
+using namespace common::utils::logger;
 
 // MediaTransport1 interface property "state"
 static const char* MEDIATRANSPORT_PROPERTY_STATE = "State";
@@ -45,6 +46,12 @@ static const int SBC_BITPOOL_MAX = 64;
  * DBus object path for the SINK media endpoint
  */
 static const char* DBUS_ENDPOINT_PATH_SINK = "/com/device/sdk/sinkendpoint";
+
+/**
+ * BlueZ A2DP streaming state when audio data is streaming from the device, but we still did not acquire the file
+ * descriptor.
+ */
+static const std::string STATE_PENDING = "pending";
 
 /**
  * BlueZ A2DP streaming state when no audio data is streaming from the device.
@@ -184,14 +191,13 @@ bool BlueZDeviceManager::init() {
 std::shared_ptr<BlueZBluetoothDevice> BlueZDeviceManager::getDeviceByPath(const std::string& path) const {
     {
         std::lock_guard<std::mutex> guard(m_devicesMutex);
-        auto iter = m_device.find(path);
-        if(iter != m_device.end()) {
+        auto iter = m_devices.find(path);
+        if(iter != m_devices.end()) {
             return iter->second;
         }
     }
 
     LOG_ERROR << TAG_BLUEZDEVICEMANAGER << "getDeviceByPathFailed, reason: deviceNotFound";
-
     return nullptr;
 }
 
@@ -275,7 +281,7 @@ void BlueZDeviceManager::onMediaStreamPropertyChanged(const std::string& path, c
 
 }
 
-void BlueZDeviceManager::onDevicePropertyChanged(std::string& path, const GVariantMapReader& changesMap) {
+void BlueZDeviceManager::onDevicePropertyChanged(const std::string& path, const GVariantMapReader& changesMap) {
     std::shared_ptr<BlueZBluetoothDevice> device = getDeviceByPath(path);
     if(!device) {
         LOG_ERROR << TAG_BLUEZDEVICEMANAGER << "onDevicePropertyChangedFailed, reason: device not found";
@@ -376,7 +382,7 @@ void BlueZDeviceManager::propertiesChangedCallback(
 
     char* propertyOwner;
 
-    GVariantMapReader tupleReader(prop);
+    GVariantTupleReader tupleReader(prop);
     propertyOwner = tupleReader.getCString(0);
     ManagedGVariant propertyMapVariant = tupleReader.getVariant(1);
 
@@ -401,7 +407,7 @@ void BlueZDeviceManager::onInterfaceAdded(const char* objectPath, ManagedGVarian
     GVariantMapReader mapReader(interfacesChangedMap.get());
     ManagedGVariant deviceInterfaceObject = mapReader.getVariant(BlueZConstants::BLUEZ_DEVICE_INTERFACE);
     if(deviceInterfaceObject.get() != nullptr) {
-        std::shared_pt<BlueZBluetoothDevice> device = addDeviceFromDBusObject(objectPath, deviceInterfaceObject.get());
+        std::shared_ptr<BlueZBluetoothDevice> device = addDeviceFromDBusObject(objectPath, deviceInterfaceObject.get());
         notifyDeviceAdded(device);
     }
 }
@@ -500,7 +506,7 @@ bool BlueZDeviceManager::getStateFromBlueZ() {
         return false;
     }
 
-    GVariantMapReader resultReader(managedObjectsVar);
+    GVariantTupleReader resultReader(managedObjectsVar);
     ManagedGVariant managedObjectsMap = resultReader.getVariant(0);
     GVariantMapReader mapReader(managedObjectsMap, true);
 
@@ -513,6 +519,7 @@ bool BlueZDeviceManager::getStateFromBlueZ() {
                 supportedInterfacesMap.getVariant(BlueZConstants::BLUEZ_ADAPTER_INTERFACE);
 
             if(adapterInterfaceVar.hasValue()) {
+                // Get HW Adapter Path here.
                 m_adapterPath = objectPath;
             }
         }

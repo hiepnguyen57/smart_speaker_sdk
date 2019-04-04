@@ -8,7 +8,7 @@ namespace deviceClientSDK {
 namespace common {
 namespace utils {
 
-using namespace deviveClientSDK::common::utils::logger;
+using namespace logger;
 
 #define TAG_REQUIRESSHUTDOWN            "RequiresShutdown\t"
 

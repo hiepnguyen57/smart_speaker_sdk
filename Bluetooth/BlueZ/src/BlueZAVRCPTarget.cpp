@@ -1,7 +1,7 @@
 #include <Common/Utils/Logger/Log.h>
 #include "BlueZ/BlueZAVRCPTarget.h"
 
-namespace deviveClientSDK {
+namespace deviceClientSDK {
 namespace bluetooth {
 namespace blueZ {
 
@@ -28,9 +28,12 @@ std::shared_ptr<BlueZAVRCPTarget> BlueZAVRCPTarget::create(std::shared_ptr<DBusP
     return std::shared_ptr<BlueZAVRCPTarget>(new BlueZAVRCPTarget(mediaControlProxy));
 }
 
-BlueZAVRCPTarget::BlueZAVRCPTarget(std::shared_ptr<DBusProxy> mediaControlProxy) :
-        m_record{std::make_shared<bluetooth::AVRCPTargetRecord>("")},
-        m_mediaControlProxy{mediaControlProxy} {
+// BlueZAVRCPTarget::BlueZAVRCPTarget(std::shared_ptr<DBusProxy> mediaControlProxy) :
+//         m_record{std::make_shared<bluetooth::AVRCPTargetRecord>("")},
+//         m_mediaControlProxy{mediaControlProxy} {
+// }
+
+BlueZAVRCPTarget::BlueZAVRCPTarget(std::shared_ptr<DBusProxy> mediaControlProxy) : m_mediaControlProxy{mediaControlProxy} {
 }
 
 std::shared_ptr<SDPRecordInterface> BlueZAVRCPTarget::getRecord() {
@@ -97,4 +100,4 @@ bool BlueZAVRCPTarget::previous() {
 
 } // namespace blueZ
 } // namespce bluetooth
-} // namespace deviveClientSDK
+} // namespace deviceClientSDK

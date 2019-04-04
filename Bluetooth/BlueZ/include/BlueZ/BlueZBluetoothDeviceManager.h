@@ -5,21 +5,21 @@
 #include <Common/SDKInterfaces/Bluetooth/BluetoothDeviceManagerInterface.h>
 #include "BlueZ/BlueZDeviceManager.h"
 
-namespace deviveClientSDK {
+namespace deviceClientSDK {
 namespace bluetooth {
 namespace blueZ {
 
-class BlueZBluetoohDeviceManager : public common::sdkInterfaces::bluetooth::BluetoothDeviceManagerInterface {
+class BlueZBluetoothDeviceManager : public common::sdkInterfaces::bluetooth::BluetoothDeviceManagerInterface {
 public:
     // A factory method to create instance class.
-    static std::unique_ptr<BlueZBluetoohDeviceManager> create(
+    static std::unique_ptr<BlueZBluetoothDeviceManager> create(
         std::shared_ptr<common::utils::bluetooth::BluetoothEventBus> eventBus);
 
-    virtual ~BlueZBluetoohDeviceManager() override;
+    virtual ~BlueZBluetoothDeviceManager() override;
 
     // BlueZBluetoothDeviceManager functions
     std::shared_ptr<common::sdkInterfaces::bluetooth::BluetoothHostControllerInterface> getHostController() override;
-    std::list<std::shared_ptr<common::sdkInterfaces::bluetooth::BluetoothHostControllerInterface>> getHostController()
+    std::list<std::shared_ptr<common::sdkInterfaces::bluetooth::BluetoothDeviceInterface>> getDiscoveredDevices()
         override;
     std::shared_ptr<common::utils::bluetooth::BluetoothEventBus> getEventBus() override;
 
@@ -37,6 +37,6 @@ private:
 
 } // namespace blueZ
 } // namespce bluetooth
-} // namespace deviveClientSDK
+} // namespace deviceClientSDK
 
 #endif // DEVICE_CLIENT_SDK_BLUETOOTH_BLUEZ_BLUEZBLUETOOTHDEVICEMANAGER_H_

@@ -3,7 +3,7 @@
 
 #include <string.h>
 
-namespace deviveClientSDK {
+namespace deviceClientSDK {
 namespace common {
 namespace utils {
 namespace logger {

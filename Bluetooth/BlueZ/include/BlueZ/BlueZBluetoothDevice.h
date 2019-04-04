@@ -41,7 +41,7 @@ public:
     /// @{
     ~BlueZBluetoothDevice() override;
 
-    std::string getMac() override;
+    std::string getMac() const override;
     std::string getFriendlyName() const override;
     common::sdkInterfaces::bluetooth::DeviceState getDeviceState() override;
 
@@ -156,6 +156,9 @@ private:
 
     // The current state of the device
     BlueZDeviceState m_deviceState;
+
+    // The associated @c BlueZDeviceManager.
+    std::shared_ptr<BlueZDeviceManager> m_deviceManager;
 
     // An executor used ofr serializing request on the Device's own thread of execution.
     common::utils::threading::Executor m_executor;

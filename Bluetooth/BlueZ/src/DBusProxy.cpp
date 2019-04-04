@@ -8,12 +8,13 @@ namespace deviceClientSDK {
 namespace bluetooth {
 namespace blueZ {
 
+using namespace common::utils::logger;
+
 #define TAG_DBUSPROXY               "DBusProxy\t"
 
 static const int PROXY_DEFAULT_TIMEOUT = -1;
 
-DBusProxy::DBusProxy(DBusProxy *proxy, 
-        const std::string& objectPath) : m_proxy{proxy}, m_objectPath{objectPath} {
+DBusProxy::DBusProxy(GDBusProxy *proxy, const std::string& objectPath) : m_proxy{proxy}, m_objectPath{objectPath} {
 
 } 
 
@@ -37,7 +38,7 @@ std::shared_ptr<DBusProxy> DBusProxy::create(const std::string& interfaceName,
         nullptr,
         &error);
 
-    if(!m_proxy) {
+    if(!proxy) {
         LOG_ERROR << TAG_DBUSPROXY << "createFailed, error" << error->message;
         g_error_free(error);
         return nullptr;
@@ -50,7 +51,7 @@ ManagedGVariant DBusProxy::callMethod(const std::string& methodName,
         GVariant* parameters, GError** error) {
     GVariant *tempResult = g_dbus_proxy_call_sync(
         m_proxy, methodName.c_str(), parameters, G_DBUS_CALL_FLAGS_NONE,
-        PROXY_DEFAULT_TIMEOUT, null, error);
+        PROXY_DEFAULT_TIMEOUT, nullptr, error);
 
     return ManagedGVariant(tempResult);
 }
@@ -59,7 +60,7 @@ ManagedGVariant DBusProxy::callMethodWithFDList(
     const std::string& methodName,
     GVariant* parameters,
     GUnixFDList** outlist,
-    GError* error) {
+    GError** error) {
     GVariant* tempResult = g_dbus_proxy_call_with_unix_fd_list_sync(
         m_proxy,
         methodName.c_str(),
@@ -70,7 +71,6 @@ ManagedGVariant DBusProxy::callMethodWithFDList(
         outlist,
         nullptr,
         error);
-    
     return ManagedGVariant(tempResult);
 }
 

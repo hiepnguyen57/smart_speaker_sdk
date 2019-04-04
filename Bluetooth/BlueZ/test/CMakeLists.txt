@@ -17,15 +17,15 @@ include_directories(../include
 find_package(PkgConfig)
 pkg_check_modules(GLIB glib-2.0)
 pkg_check_modules(GIO gio-unix-2.0)
-pkg_check_modules(DBUS dbus-1)
+#pkg_check_modules(DBUS dbus-1)
 
 include_directories(${GLIB_INCLUDE_DIRS})
 include_directories(${GIO_LIBRARY_DIRS})
-include_directories(${DBUS_INCLUDE_DIRS})
+#include_directories(${DBUS_INCLUDE_DIRS})
 
 link_directories(${GLIB_LIBRARY_DIRS})
 link_directories(${GIO_LIBRARY_DIRS})
-link_directories(${DBUS_LIBRARY_DIRS})
+#link_directories(${DBUS_LIBRARY_DIRS})
 
 add_definitions(${GLIB_CFLAGS_OTHER})
 add_definitions(${GIO_CFLAGS})
@@ -62,4 +62,4 @@ set(SOURCES ../../../Common/Utils/src/Logger/Level.cpp
 
 find_package(Threads)
 add_executable(bluetoothTest ${SOURCES}) 
-target_link_libraries(bluetoothTest ${CMAKE_THREAD_LIBS_INIT} "${GIO_LDFLAGS}" "sbc" ${Glib_LIBRARY} ${DBUS_LIBRARIES})
+target_link_libraries(bluetoothTest ${CMAKE_THREAD_LIBS_INIT} ${GIO_LDFLAGS} ${Glib_LIBRARY} ${DBUS_LIBRARIES})

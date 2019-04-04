@@ -9,7 +9,7 @@
 #include "BlueZ/BlueZBluetoothDevice.h"
 #include "BlueZ/BlueZUtils.h"
 
-namespace deviveClientSDK {
+namespace deviceClientSDK {
 namespace bluetooth {
 namespace blueZ {
 
@@ -54,6 +54,6 @@ private:
 
 } // namespace blueZ
 } // namespce bluetooth
-} // namespace deviveClientSDK
+} // namespace deviceClientSDK
 
 #endif // DEVICE_CLIENT_SDK_BLUETOOTH_BLUEZ_BLUEZAVRCPTARGET_H_

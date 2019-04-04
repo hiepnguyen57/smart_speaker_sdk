@@ -6,6 +6,8 @@ namespace deviceClientSDK {
 namespace bluetooth {
 namespace blueZ {
 
+using namespace common::utils::logger;
+
 #define TAG_GVARIANTTUPLEREADER         "GVariantTupleReader\t"
 
 bool GVariantTupleReader::forEach(std::function<bool(GVariant* value)> iteratorFunction) const {
@@ -36,7 +38,7 @@ GVariantTupleReader::GVariantTupleReader(GVariant* originalVariant) : m_tuple{or
 }
 
 GVariantTupleReader::GVariantTupleReader(ManagedGVariant& originalVariant) : m_tuple{originalVariant.get()} {
-    if(originVariant.hasValue()) {
+    if(originalVariant.hasValue()) {
         g_variant_ref(originalVariant.get());
     }
 }

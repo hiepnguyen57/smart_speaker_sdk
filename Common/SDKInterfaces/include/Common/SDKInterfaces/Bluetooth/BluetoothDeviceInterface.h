@@ -150,6 +150,9 @@ public:
     // @return A pointer to an instance of the @c AD2PSourceInterface if supported, else a nullptr.
     virtual std::shared_ptr<services::A2DPSourceInterface> getA2DPSource() = 0;
 
+    // @return A pointer to an instance of the @c A2DPSinkInterface if supported, else a nullptr.
+    virtual std::shared_ptr<services::A2DPSinkInterface> getA2DPSink() = 0;
+
     // @return A pointer to an instance of the @c AVRCPTargetInterface if supported, else a nullptr.
     virtual std::shared_ptr<services::AVRCPTargetInterface> getAVRCPTarget() = 0;
 

@@ -5,7 +5,7 @@
 #include <Common/Utils/Bluetooth/SDPRecords.h>
 #include <Common/Utils/Bluetooth/FormattedAudioStreamAdapter.h>
 
-namespace deviveClientSDK {
+namespace deviceClientSDK {
 namespace bluetooth {
 namespace blueZ {
 
@@ -59,6 +59,6 @@ private:
 
 } // namespace blueZ
 } // namespce bluetooth
-} // namespace deviveClientSDK
+} // namespace deviceClientSDK
 
 #endif // DEVICE_CLIENT_SDK_BLUETOOTH_BLUEZ_BLUEZA2DPSOURCE_H_

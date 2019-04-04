@@ -31,6 +31,13 @@ public:
      */
     explicit GVariantTupleReader(GVariant* originalVariant);
 
+    /**
+     * Constructor to initialize the reader with the reference to @c ManagedGVariant
+     *
+     * @param originalVariant A reference to @c ManagedGVariant
+     */
+    explicit GVariantTupleReader(ManagedGVariant& originalVariant);
+
     GVariantTupleReader(const GVariantTupleReader& other);
 
     // Get string value by index

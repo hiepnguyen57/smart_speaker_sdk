@@ -8,6 +8,8 @@ namespace deviceClientSDK {
 namespace bluetooth {
 namespace blueZ {
 
+using namespace common::utils::logger;
+
 #define TAG_DBUSPROPERTIESPROXY                 "DBusPropertiesProxy\t"
 
 DBusPropertiesProxy::DBusPropertiesProxy(GDBusProxy* proxy, const std::string& objectPath) :
@@ -87,6 +89,7 @@ bool DBusPropertiesProxy::getStringProperty(
         LOG_ERROR << TAG_DBUSPROPERTIESPROXY << "getStringPropertyFailed, reason: result is null";
         return false;
     }  
+
     ManagedGError error;
     ManagedGVariant varResult = callMethod("Get", g_variant_new("(ss)", interface.c_str(), property.c_str()), error.toOutputParameter());
     if(error.hasError()) {
@@ -107,7 +110,7 @@ bool DBusPropertiesProxy::setProperty(const std::string& interface, const std::s
         return false;
     }
     ManagedGError error;
-    ManagedGVariant varResult = callMethod("Get", g_variant_new("(ssv)", interface.c_str(), property.c_str(), value), error.toOutputParameter());
+    ManagedGVariant varResult = callMethod("Set", g_variant_new("(ssv)", interface.c_str(), property.c_str(), value), error.toOutputParameter());
     if(error.hasError()) {
         LOG_ERROR << TAG_DBUSPROPERTIESPROXY << "setPropertyFailed, " 
                     << "error: " << error.getMessage()

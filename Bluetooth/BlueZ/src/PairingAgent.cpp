@@ -4,12 +4,14 @@
 #include <Common/Utils/Logger/Log.h>
 
 #include "BlueZ/BlueZConstants.h"
-#include "BlueZ/BluezDeviceManager.h"
+#include "BlueZ/BlueZDeviceManager.h"
 #include "BlueZ/PairingAgent.h"
 
 namespace deviceClientSDK {
 namespace bluetooth {
 namespace blueZ {
+
+using namespace common::utils::logger;
 
 #define TAG_PAIRINGAGENT "PairingAgent\t"
 
@@ -23,7 +25,7 @@ static const std::string RELEASE = "Release";
 static const std::string REQUEST_PIN_CODE = "RequestPinCode";
 static const std::string DISPLAY_PIN_CODE = "DisplayPinCode";
 static const std::string REQUEST_PASSKEY = "RequestPasskey";
-static const std::string DISPLAy_PASSKEY = "DisplayPasskey";
+static const std::string DISPLAY_PASSKEY = "DisplayPasskey";
 static const std::string REQUEST_CONFIRMATION = "RequestConfirmation";
 static const std::string REQUEST_AUTHORIZATION = "RequestAuthorization";
 static const std::string AUTHORIZE_SERVICE = "AuthorizeService";

@@ -15,7 +15,7 @@ namespace common {
 namespace utils {
 namespace uuidGeneration {
 
-using namespace deviveClientSDK::common::utils::logger;
+using namespace logger;
 
 #define TAG_UUIDGENERATION                  "UUIDGeneration\t"
 

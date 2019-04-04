@@ -7,15 +7,13 @@
 
 #include <gio/gio.h>
 
-namespace deviveClientSDK {
+namespace deviceClientSDK {
 namespace bluetooth {
 namespace blueZ {
-
 /**
  * A wrapper around DBus connection object.
  */
-class DBusConnection
-{
+class DBusConnection {
 public:
     /**
      * Destructor.
@@ -85,6 +83,6 @@ private:
 
 } // namespace blueZ
 } // namespace bluetooth
-} // namespace deviveClientSDK
+} // namespace deviceClientSDK
 
 #endif // DEVICE_CLIENT_SDK_BLUETOOTH_BLUEZ_DBUSCONNECTION_H_

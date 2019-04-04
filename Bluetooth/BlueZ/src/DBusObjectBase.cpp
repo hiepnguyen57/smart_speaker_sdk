@@ -7,6 +7,8 @@ namespace deviceClientSDK {
 namespace bluetooth {
 namespace blueZ {
 
+using namespace common::utils::logger;
+
 #define TAG_DBUSOBJECTBASE              "DBusObjectBase\t"
 
 DBusObjectBase::~DBusObjectBase() {
@@ -53,6 +55,7 @@ bool DBusObjectBase::registerWithDBus() {
         m_connection->getGDBusConnection(),
         m_objectPath.c_str(),
         interfaceInfo,
+        &m_interfaceVtable,
         this,
         nullptr,
         nullptr);
