@@ -404,8 +404,12 @@ void BlueZDeviceManager::onPropertiesChanged(
 }
 
 void BlueZDeviceManager::onInterfaceAdded(const char* objectPath, ManagedGVariant& interfacesChangedMap) {
+    // LOG_DEBUG << "onInterfaceAdded, path: " << objectPath;
+    // LOG_DEBUG << "onInterfaceAdded, Details" << g_variant_print(interfacesChangedMap.get(), true);
+
     GVariantMapReader mapReader(interfacesChangedMap.get());
     ManagedGVariant deviceInterfaceObject = mapReader.getVariant(BlueZConstants::BLUEZ_DEVICE_INTERFACE);
+
     if(deviceInterfaceObject.get() != nullptr) {
         std::shared_ptr<BlueZBluetoothDevice> device = addDeviceFromDBusObject(objectPath, deviceInterfaceObject.get());
         notifyDeviceAdded(device);
