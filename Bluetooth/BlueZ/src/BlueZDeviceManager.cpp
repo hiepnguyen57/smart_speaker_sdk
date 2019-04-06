@@ -677,12 +677,12 @@ void BlueZDeviceManager::mainLoopThread() {
             break;
         }
 
-        m_mediaPlayer = MPRISPlayer::create(m_connection, m_mediaProxy, m_eventBus);
-        if(!m_mediaPlayer) {
-            LOG_ERROR << TAG_BLUEZDEVICEMANAGER << "initMediaPlayerFailed";
-            m_mainLoopInitPromise.set_value(false);
-            break;
-        }
+        // m_mediaPlayer = MPRISPlayer::create(m_connection, m_mediaProxy, m_eventBus);
+        // if(!m_mediaPlayer) {
+        //     LOG_ERROR << TAG_BLUEZDEVICEMANAGER << "initMediaPlayerFailed";
+        //     m_mainLoopInitPromise.set_value(false);
+        //     break;
+        // }
 
         m_mainLoopInitPromise.set_value(true);
 

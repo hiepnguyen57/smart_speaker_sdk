@@ -134,10 +134,10 @@ bool BlueZBluetoothDevice::init() {
     }
 
     // Parse UUIDs and find versions.
-    if(!initializeServices(getServiceUuids())) {
-        LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "reason: initializeServicesFailed";
-        return false;
-    }
+    // if(!initializeServices(getServiceUuids())) {
+    //     LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "reason: initializeServicesFailed";
+    //     return false;
+    // }
     return true;
 }
 
@@ -150,7 +150,7 @@ bool BlueZBluetoothDevice::initializeServices(const std::unordered_set<std::stri
                 return false;
             } else {
                 a2dpSource->setup();
-                //insertService(a2dpSource);
+                insertService(a2dpSource);
             }
         } else if(AVRCPTargetInterface::UUID == uuid && !serviceExists(uuid)) {
             auto mediaControlProxy = DBusProxy::create(MEDIA_CONTROL_INTERFACE, m_objectPath);
@@ -165,7 +165,7 @@ bool BlueZBluetoothDevice::initializeServices(const std::unordered_set<std::stri
                 return false;
             } else {
                 avrcpTarget->setup();
-                //insertService(avrcpTarget);
+                insertService(avrcpTarget);
             }
         } else if(A2DPSinkInterface::UUID == uuid && !serviceExists(uuid)) {
             auto a2dpSink = BlueZA2DPSink::create();
@@ -174,7 +174,7 @@ bool BlueZBluetoothDevice::initializeServices(const std::unordered_set<std::stri
                 return false;
             } else {
                 a2dpSink->setup();
-                //insertService(a2dpSink);
+                insertService(a2dpSink);
             }
         } else if(AVRCPControllerInterface::UUID == uuid && !serviceExists(uuid)) {
             auto avrcpController = BlueZAVRCPController::create();
@@ -183,7 +183,7 @@ bool BlueZBluetoothDevice::initializeServices(const std::unordered_set<std::stri
                 return false;
             } else {
                 avrcpController->setup();
-                //insertService(avrcpController);
+                insertService(avrcpController);
             }           
         }
     }
@@ -531,7 +531,7 @@ void BlueZBluetoothDevice::onPropertyChanged(const GVariantMapReader& changesMap
 
     if (uuidsVariant.hasValue()) {
         auto uuids = getServiceUuids(uuidsVariant.get());
-        initializeServices(uuids);
+        //initializeServices(uuids);
 
         a2dpSourceAvailable = (uuids.count(A2DPSourceInterface::UUID) > 0);
         a2dpSinkAvailable = (uuids.count(A2DPSinkInterface::UUID) > 0);
