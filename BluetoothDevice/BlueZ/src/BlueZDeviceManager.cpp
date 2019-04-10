@@ -259,7 +259,7 @@ void BlueZDeviceManager::onMediaStreamPropertyChanged(const std::string& path, c
         return;
     } else if(A2DPSinkInterface::UUID == uuid) {
         if (path != m_mediaEndpoint->getStreamingDevicePath()) {
-            LOG_ERROR << TAG_BLUEZDEVICEMANAGER << "reason: pathMismatch";
+            //LOG_ERROR << TAG_BLUEZDEVICEMANAGER << "reason: pathMismatch";
             return;
         }
 

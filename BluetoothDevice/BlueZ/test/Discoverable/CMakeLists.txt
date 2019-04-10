@@ -3,27 +3,16 @@ cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 # Set project information
 project(discoverableTest)
 
-# setup the compiler option
-# set C++ standard to C++11
-#set(CMAKE_CXX_STANDARD 11)
-#set(CMAKE_CXX_STANDARD_REQUIRED ON)
-#message(STATUS "C++11 support has been enabled by default.")
-
 #add_definitions(-DFILE_LOGGER)
 #add_definitions(-DNDEBUG)
 
-#Bring the headers into the project
-include_directories(../../include 
-                    ../../../BlueZ/include
-                    ../../../../Common/Utils/include
-                    ../../../../Common/SDKInterfaces/include
-)
+find_package(Threads)
 
 find_package(PkgConfig)
 pkg_check_modules(GIO REQUIRED gio-2.0>=2.4)
 pkg_check_modules(GIO_UNIX REQUIRED gio-unix-2.0>=2.4)
 pkg_check_modules(PULSEAUDIO REQUIRED libpulse>=8.0)
-pkg_check_modules(SBC REQUIRED)
+pkg_check_modules(SBC REQUIRED sbc)
 
 include_directories(${GIO_LIBRARY_DIRS})
 include_directories(${PULSEAUDIO_INCLUDE_DIRS})
@@ -34,6 +23,13 @@ link_directories(${GIO_UNIX_INCLUDE_DIRS})
 
 add_definitions(${GLIB_CFLAGS_OTHER})
 add_definitions(${GIO_CFLAGS})
+
+#Bring the headers into the project
+include_directories(../../include 
+                    ../../../BlueZ/include
+                    ../../../../Common/Utils/include
+                    ../../../../Common/SDKInterfaces/include
+)
 
 #add the sources using the set command as follows:
 set(SOURCES ../../../../Common/Utils/src/Logger/Level.cpp
@@ -68,6 +64,5 @@ set(SOURCES ../../../../Common/Utils/src/Logger/Level.cpp
             DiscoverableTest.cpp
 )
 
-find_package(Threads)
 add_executable(discoverableTest ${SOURCES}) 
 target_link_libraries(discoverableTest ${CMAKE_THREAD_LIBS_INIT} ${GIO_LDFLAGS} "sbc" ${PULSEAUDIO_LDFLAGS} -lwiringPi)
