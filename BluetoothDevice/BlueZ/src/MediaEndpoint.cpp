@@ -79,7 +79,7 @@ constexpr size_t MAX_SANE_CODE_SIZE = MAX_SANE_FRAME_LENGTH * 32;
 constexpr size_t MIN_SANE_CODE_SIZE = 1;
 
 /**
- * XML description of the MediaEndpoint1 interface to be implemented by this obejct. The format is defined by DBus.
+ * XML description of the MediaEndpoint1 interface to be implemented by this object. The format is defined by DBus.
  * This data is used during the registration of the media endpoint object.
  */
 static const gchar mediaEndpointIntrospectionXml[] =
@@ -147,7 +147,7 @@ void MediaEndpoint::mediaThread() {
         {
             std::unique_lock<std::mutex> modeLock(m_mutex);
 
-            m_modeChangeSignal.wait(modeLock, [this]() {return m_operatingModeChanged;});
+            m_modeChangeSignal.wait(modeLock, [this]() {return m_operatingModeChanged; });
             m_operatingModeChanged = false;
 
             if(m_operatingMode != OperatingMode::SINK) {
@@ -163,12 +163,17 @@ void MediaEndpoint::mediaThread() {
 
         }
 
+        LOG_DEBUG << TAG_MEDIAENDPOINT << "Starting media streaming...";
+
         pollStruct.fd = mediaContext->getStreamFD();
         m_ioBuffer.resize(static_cast<unsigned long>(mediaContext->getReadMTU()));
 
         const size_t sbcCodeSize = sbc_get_codesize(mediaContext->getSBCContextPtr());
         const size_t sbcFrameLength = sbc_get_frame_length(mediaContext->getSBCContextPtr());
 
+        LOG_DEBUG << TAG_MEDIAENDPOINT << "codec size: " << sbcCodeSize << "\t"
+                                       << "frame length: " << sbcFrameLength;
+        
         if(sbcFrameLength < MIN_SANE_FRAME_LENGTH || sbcFrameLength > MAX_SANE_FRAME_LENGTH) {
             LOG_ERROR << TAG_MEDIAENDPOINT << "mediaThreadFailed; reason: invalid sbcFrameLength";
             abortStreaming();
@@ -200,7 +205,7 @@ void MediaEndpoint::mediaThread() {
                 break;
             }
 
-            // Check if wew are still in SINK mode
+            // Check if we are still in SINK mode
             if(m_operatingMode != OperatingMode::SINK) {
                 break;
             }
@@ -274,9 +279,10 @@ void MediaEndpoint::mediaThread() {
 
             m_ioStream->send(m_sbcBuffer.data(), writeSize);
         } // IO loop, continue while still in SINK mode
-    }     // while(true) =  thread loop
+    }     // while(true) - thread loop
 
-    mediaContext.reset(); 
+    mediaContext.reset();
+    LOG_DEBUG << TAG_MEDIAENDPOINT << "Exiting media thread";
 }
 
 std::shared_ptr<common::utils::bluetooth::FormattedAudioStreamAdapter> MediaEndpoint::getAudioStream() {
@@ -310,6 +316,8 @@ void MediaEndpoint::onMediaTransportStateChanged(
     common::utils::bluetooth::MediaStreamingState newState,
     const std::string& devicePath) {
     
+    LOG_DEBUG << TAG_MEDIAENDPOINT << "onMediaTransportStateChanged; devicePath: " << devicePath;
+    
     if(m_operatingMode == OperatingMode::RELEASED) {
         // Release the media thread already.
         return;
@@ -331,11 +339,16 @@ void MediaEndpoint::onMediaTransportStateChanged(
         }
 
         ManagedGError error;
+        // Do not free, we do not own this object.
         GUnixFDList* fdList = nullptr;
         ManagedGVariant transportDetails = 
             transportProxy->callMethodWithFDList("Acquire", nullptr, &fdList, error.toOutputParameter());
         if(error.hasError()) {
-            LOG_ERROR << TAG_MEDIAENDPOINT << "onMediaTransportStateChangedFailed; reason: nullFDlist";
+            LOG_ERROR << TAG_MEDIAENDPOINT << "onMediaTransportStateChangedFailed; reason: Failed to acquire media stream";
+            return;
+        } else if(!fdList) {
+            LOG_ERROR << TAG_MEDIAENDPOINT << "onMediaTransportStateChangedFailed; reason: nullFdlist; message: " 
+                                            << error.getMessage();
             return;
         }
 
@@ -362,6 +375,11 @@ void MediaEndpoint::onMediaTransportStateChanged(
             close(streamFD);
             return;
         }
+
+        LOG_DEBUG << TAG_MEDIAENDPOINT << "Transport details";
+        LOG_DEBUG << TAG_MEDIAENDPOINT << "File Descriptor Index: " << streamFDIndex
+                                    << "; File Descriptor:  " << streamFD << "; Read MTU: " << readMTU
+                                    << "; write MTU: " << writeMTU;
 
         {
             std::lock_guard<std::mutex> modeLock(m_mutex);
@@ -438,6 +456,10 @@ void MediaEndpoint::onSetConfiguration(GVariant* arguments, GDBusMethodInvocatio
                     m_audioFormat.layout =  common::utils::AudioFormat::Layout::INTERLEAVED;
                     m_audioFormat.dataSigned = true;
 
+                    LOG_DEBUG << TAG_MEDIAENDPOINT << "Bluetooth stream paramters";
+                    LOG_DEBUG << TAG_MEDIAENDPOINT << "numChannels: " << m_audioFormat.numChannels
+                                                   << "; rate: " << m_audioFormat.sampleRateHz;
+
                     m_currentMediaContext->setSBCInitialized(true);                   
                 }
             } else {
@@ -452,7 +474,8 @@ void MediaEndpoint::onSetConfiguration(GVariant* arguments, GDBusMethodInvocatio
                 invocation, DBUS_ERROR_FAILED, "Failed to read SBC configuration");
             return;              
         }
-
+    
+        LOG_DEBUG << TAG_MEDIAENDPOINT << "mediaTransport: " << path;
         m_streamingDevicePath = path;     
     }
 

@@ -144,6 +144,7 @@ bool BlueZBluetoothDevice::init() {
 bool BlueZBluetoothDevice::initializeServices(const std::unordered_set<std::string>& uuids) {
     for(const auto& uuid : uuids) {
         if(A2DPSourceInterface::UUID == uuid && !serviceExists(uuid)) {
+            LOG_DEBUG << TAG_BLUEZBLUETOOTHDEVICE << "supports: " << A2DPSourceInterface::NAME;
             auto a2dpSource = BlueZA2DPSource::create(m_deviceManager);
             if(!a2dpSource) {
                 LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "reason: createA2DPFailed";
@@ -153,6 +154,7 @@ bool BlueZBluetoothDevice::initializeServices(const std::unordered_set<std::stri
                 insertService(a2dpSource);
             }
         } else if(AVRCPTargetInterface::UUID == uuid && !serviceExists(uuid)) {
+            LOG_DEBUG << TAG_BLUEZBLUETOOTHDEVICE << "supports: " << AVRCPTargetInterface::NAME;
             auto mediaControlProxy = DBusProxy::create(MEDIA_CONTROL_INTERFACE, m_objectPath);
             if(!mediaControlProxy) {
                 LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "reason: nullMediaControlProxy";
@@ -168,6 +170,7 @@ bool BlueZBluetoothDevice::initializeServices(const std::unordered_set<std::stri
                 insertService(avrcpTarget);
             }
         } else if(A2DPSinkInterface::UUID == uuid && !serviceExists(uuid)) {
+            LOG_DEBUG << TAG_BLUEZBLUETOOTHDEVICE << "supports: " << A2DPSinkInterface::NAME;
             auto a2dpSink = BlueZA2DPSink::create();
             if(!a2dpSink) {
                 LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "reason: createA2DPSinkFailed";
@@ -177,6 +180,7 @@ bool BlueZBluetoothDevice::initializeServices(const std::unordered_set<std::stri
                 insertService(a2dpSink);
             }
         } else if(AVRCPControllerInterface::UUID == uuid && !serviceExists(uuid)) {
+            LOG_DEBUG << TAG_BLUEZBLUETOOTHDEVICE << "supports: " << AVRCPControllerInterface::NAME;
             auto avrcpController = BlueZAVRCPController::create();
             if (!avrcpController) {
                 LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "reason: createAVRCPControllerFailed";

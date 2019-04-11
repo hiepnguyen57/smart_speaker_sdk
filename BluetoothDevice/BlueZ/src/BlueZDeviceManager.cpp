@@ -105,7 +105,7 @@ bool BlueZDeviceManager::init() {
 
     m_mediaProxy = DBusProxy::create(BlueZConstants::BLUEZ_MEDIA_INTERFACE, m_adapterPath);
     if(m_mediaProxy == nullptr) {
-        LOG_ERROR << TAG_BLUEZDEVICEMANAGER << "Failed to create Media Proxy";
+        LOG_ERROR << TAG_BLUEZDEVICEMANAGER << "initializeMediaFailed; reason: Failed to create Media Proxy";
         return false;
     }
 
@@ -204,8 +204,8 @@ void BlueZDeviceManager::onMediaStreamPropertyChanged(const std::string& path, c
     const std::string FD_KEY = "/fd";
 
     // Get device path without the /fd number
-    auto pos = path.find(FD_KEY);
-    if(std::string::npos == pos) {
+    auto pos = path.rfind(FD_KEY);
+    if(pos == std::string::npos) {
         LOG_ERROR << TAG_BLUEZDEVICEMANAGER << "reason: unexpectedPath";
         return;
     }
@@ -250,7 +250,7 @@ void BlueZDeviceManager::onMediaStreamPropertyChanged(const std::string& path, c
     if(A2DPSourceInterface::UUID == uuid) {
         auto sink = device ->getA2DPSink();
         if(!sink) {
-            LOG_ERROR << TAG_BLUEZDEVICEMANAGER << "nullSink";
+            LOG_ERROR << TAG_BLUEZDEVICEMANAGER << "reason: nullSink";
             return;
         }
 
@@ -259,7 +259,8 @@ void BlueZDeviceManager::onMediaStreamPropertyChanged(const std::string& path, c
         return;
     } else if(A2DPSinkInterface::UUID == uuid) {
         if (path != m_mediaEndpoint->getStreamingDevicePath()) {
-            //LOG_ERROR << TAG_BLUEZDEVICEMANAGER << "reason: pathMismatch";
+            LOG_DEBUG << TAG_BLUEZDEVICEMANAGER << "reason: pathMismatch; path: "
+                      << m_mediaEndpoint->getStreamingDevicePath();
             return;
         }
 
