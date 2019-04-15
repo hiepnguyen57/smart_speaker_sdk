@@ -13,6 +13,14 @@ using namespace std;
 using namespace deviceClientSDK;
 using namespace deviceClientSDK::common::utils::logger;
 
+#ifdef BLUETOOTH_BLUEZ_PULSEAUDIOINITIALIZER
+#include <BlueZ/PulseAudioBluetoothInitializer.h>
+
+// Initializer object to reload PulseAudio Bluetooth modules.
+std::shared_ptr<bluetoothDevice::blueZ::PulseAudioBluetoothInitializer> m_pulseAudioInitializer;
+
+#endif
+
 // Use GPIO Pin 17 
 #define BUTTON_PIN 0
 
@@ -72,6 +80,12 @@ int main() {
 
     auto eventBus = std::make_shared<common::utils::bluetooth::BluetoothEventBus>();
     bluetoothDeviceManager = bluetooth::blueZ::BlueZBluetoothDeviceManager::create(eventBus);
+
+#ifdef BLUETOOTH_BLUEZ_PULSEAUDIOINITIALIZER
+    // Create PulseAudio initializer object before  we create the BT Device manager.
+    m_pulseAudioInitializer = bluetoothDevice::blueZ::PulseAudioBluetoothInitializer::create(eventBus);
+
+#endif
 
     auto hostController = bluetoothDeviceManager->getHostController();
     if(!hostController) {
