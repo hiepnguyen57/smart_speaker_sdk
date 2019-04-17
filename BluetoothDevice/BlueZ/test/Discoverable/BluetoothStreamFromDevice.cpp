@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-//#include <wiringPi.h>
 
 #include <glib.h>
 #include <gio/gio.h>
@@ -12,12 +11,19 @@
 #include <BlueZ/BlueZBluetoothDeviceManager.h>
 #include <Common/SDKInterfaces/Bluetooth/BluetoothDeviceManagerInterface.h>
 
+#ifdef RASPBERRYPI_CONFIG
+#include <wiringPi.h>
+#define RASP_BUTTON_PIN 0
+#else
+#include "libsoc_gpio.h"
+#include "libsoc_debug.h"
+#define BBB_GPIO_INPUT   7
+#endif
+
 using namespace std;
 using namespace deviceClientSDK;
 using namespace deviceClientSDK::common::utils::logger;
 
-// Use GPIO Pin 17 
-//#define BUTTON_PIN 0
 
 #ifdef BLUETOOTH_BLUEZ_PULSEAUDIOINITIALIZER
 #include <BlueZ/PulseAudioBluetoothInitializer.h>
@@ -27,12 +33,96 @@ std::shared_ptr<bluetoothDevice::blueZ::PulseAudioBluetoothInitializer> m_pulseA
 
 #endif
 
+static GMainLoop *mainloop = NULL;
+
 //create the BluetoothDeviceManager to communicate with the Bluetooth stack.
 std::unique_ptr<common::sdkInterfaces::bluetooth::BluetoothDeviceManagerInterface> bluetoothDeviceManager;
 
 int countNumber = 0;
 
-static GMainLoop *mainloop = NULL;
+//The interrupt handler
+#ifdef RASPBERRYPI_CONFIG
+void raspberryInterrupt(void) {
+   auto devices = bluetoothDeviceManager->getDiscoveredDevices();
+    for(const auto& device : devices) {
+        if(device->isConnected()) {
+            auto avrcpTarget = device->getAVRCPTarget();
+            if(!avrcpTarget) {
+                LOG_ERROR << "AVRCP not supported";
+                return;
+            }
+            switch(countNumber) {
+                case 0:
+                    LOG_INFO << "Pause Command";
+                    avrcpTarget->pause();
+                    break;
+                case 1:
+                    LOG_INFO << "Play Command";
+                    avrcpTarget->play();
+                    break;
+                case 2:
+                    LOG_INFO << "Next Command";
+                    avrcpTarget->next();
+                    break;
+                case 3:
+                    LOG_INFO << "Previous Command";
+                    avrcpTarget->previous();
+                    break;
+                case 4:
+                    LOG_INFO << "Disconnect Command";
+                    device->disconnect();
+                    break;
+            }
+
+        }
+    }
+    countNumber++;
+    if(countNumber > 4) {
+        countNumber = 0;
+    }
+}
+#else
+int beagleboneInterrupt(void* arg)
+{
+   auto devices = bluetoothDeviceManager->getDiscoveredDevices();
+    for(const auto& device : devices) {
+        if(device->isConnected()) {
+            auto avrcpTarget = device->getAVRCPTarget();
+            if(!avrcpTarget) {
+                LOG_ERROR << "AVRCP not supported";
+                return;
+            }
+            switch(countNumber) {
+                case 0:
+                    LOG_INFO << "Pause Command";
+                    avrcpTarget->pause();
+                    break;
+                case 1:
+                    LOG_INFO << "Play Command";
+                    avrcpTarget->play();
+                    break;
+                case 2:
+                    LOG_INFO << "Next Command";
+                    avrcpTarget->next();
+                    break;
+                case 3:
+                    LOG_INFO << "Previous Command";
+                    avrcpTarget->previous();
+                    break;
+                case 4:
+                    LOG_INFO << "Disconnect Command";
+                    device->disconnect();
+                    break;
+            }
+
+        }
+    }
+    countNumber++;
+    if(countNumber > 4) {
+        countNumber = 0;
+    }
+}
+#endif
 
 void signalHandler(int signum) {
     // cleanup and close up stuff here  
@@ -53,66 +143,42 @@ void signalHandler(int signum) {
 }
 
 
-// /**
-//  * If you want to disconnect with device, you should generate a pulse on GPIO Pin 17
-//  */
-// // The interrupt handler
-// void myInterrupt(void) {
-//     auto devices = bluetoothDeviceManager->getDiscoveredDevices();
-//     for(const auto& device : devices) {
-//         if(device->isConnected()) {
-//             auto avrcpTarget = device->getAVRCPTarget();
-//             if(!avrcpTarget) {
-//                 LOG_ERROR << "AVRCP not supported";
-//                 return;
-//             }
-//             switch(countNumber) {
-//                 case 0:
-//                     LOG_INFO << "Pause Command";
-//                     avrcpTarget->pause();
-//                     break;
-//                 case 1:
-//                     LOG_INFO << "Play Command";
-//                     avrcpTarget->play();
-//                     break;
-//                 case 2:
-//                     LOG_INFO << "Next Command";
-//                     avrcpTarget->next();
-//                     break;
-//                 case 3:
-//                     LOG_INFO << "Previous Command";
-//                     avrcpTarget->previous();
-//                     break;
-//                 case 4:
-//                     LOG_INFO << "Disconnect Command";
-//                     device->disconnect();
-//                     break;
-//             }
-
-//         }
-//     }
-//     countNumber++;
-//     if(countNumber > 4) {
-//         countNumber = 0;
-//     }
-
-// }
-
 int main() {
     // register signal SIGINT and signal handler  
     signal(SIGINT, signalHandler);
 
-    // //setup the wiring libary
-    // if(wiringPiSetup() < 0) {
-    //     LOG_ERROR << "Unable to setup Wiring Pi";
-    //     return -1;
-    // }
+#ifdef RASPBERRYPI_CONFIG
+    //setup the wiring libary
+    if(wiringPiSetup() < 0) {
+        LOG_ERROR << "Unable to setup Wiring Pi";
+        return 1;
+    }
 
-    // // Set Pin 17/0 generate an interrupt on hight to low transitions
-    // if(wiringPiISR(BUTTON_PIN, INT_EDGE_FALLING, &myInterrupt) < 0) {
-    //     LOG_ERROR << "Unable to setup ISR";
-    //     return -1;
-    // }
+    // Set Pin 17/0 generate an interrupt on hight to low transitions
+    if(wiringPiISR(RASP_BUTTON_PIN, INT_EDGE_FALLING, &raspberryInterrupt) < 0) {
+        LOG_ERROR << "Unable to setup ISR";
+        return 1;
+    }
+#else
+    // Create both gpio pointers
+    gpio *gpio_input;
+
+    // Enable debug output
+    libsoc_set_debug(1);
+
+    // Request gpios
+    gpio_input = libsoc_gpio_request(BBB_GPIO_INPUT, LS_GPIO_SHARED);
+
+     // Set direction to INPUT
+    libsoc_gpio_set_direction(gpio_input, INPUT);
+
+    // Set edge to RISING
+    libsoc_gpio_set_edge(gpio_input, RISING);
+    
+    // Setup callback
+    libsoc_gpio_callback_interrupt(gpio_input, &beagleboneInterrupt, nullptr);
+
+#endif
 
     //create the event Bus.
     auto eventBus = std::make_shared<common::utils::bluetooth::BluetoothEventBus>();

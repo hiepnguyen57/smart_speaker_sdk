@@ -4,6 +4,8 @@ cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 project(BluetoothStreamToDevice)
 
 option(BLUETOOTH_BLUEZ_PULSEAUDIOINITIALIZER "Override Pulseaudio BlueZ Endpoints with SDK ones" OFF)
+option(RASPBERRYPI_CONFIG "Choose demo on RaspberryPi or Beaglebone" ON)
+
 #add_definitions(-DFILE_LOGGER)
 #add_definitions(-DNDEBUG)
 add_definitions(${GLIB_CFLAGS_OTHER})
@@ -64,14 +66,28 @@ set(SOURCES ../../../../Common/Utils/src/Logger/Level.cpp
             BluetoothStreamToDevice.cpp
 )
 
+
 if(BLUETOOTH_BLUEZ_PULSEAUDIOINITIALIZER)
     pkg_check_modules(PULSEAUDIO REQUIRED libpulse>=8.0)
     include_directories(${PULSEAUDIO_INCLUDE_DIRS})
     add_definitions(-DBLUETOOTH_BLUEZ_PULSEAUDIOINITIALIZER)
     list(APPEND SOURCES ../../../../BluetoothDevice/BlueZ/src/PulseAudioBluetoothInitializer.cpp)
-    target_link_libraries(BluetoothStreamToDevice ${PULSEAUDIO_LDFLAGS})
+
+else()
+    message("PulseAudioBluetoothInitializer not supported")
 endif()
 
-
 add_executable(BluetoothStreamToDevice ${SOURCES}) 
-target_link_libraries(BluetoothStreamToDevice ${CMAKE_THREAD_LIBS_INIT} ${GIO_LDFLAGS} ${Glib_LIBRARY} "sbc" -lwiringPi)
+
+if(RASPBERRYPI_CONFIG)
+    message("Create demo on RaspberryPi")
+    add_definitions(-DRASPBERRYPI_CONFIG)
+    target_link_libraries(BluetoothStreamToDevice ${CMAKE_THREAD_LIBS_INIT} ${GIO_LDFLAGS} ${Glib_LIBRARY} "sbc" ${PULSEAUDIO_LDFLAGS} -lwiringPi)
+
+else()
+    message("Create demo on Beaglebone")
+    pkg_check_modules(LIBSOC REQUIRED libsoc)
+    target_link_libraries(BluetoothStreamToDevice ${CMAKE_THREAD_LIBS_INIT} ${GIO_LDFLAGS} ${Glib_LIBRARY} "sbc" ${PULSEAUDIO_LDFLAGS} "soc")
+
+endif()
+
