@@ -77,15 +77,7 @@ int beagleboneInterrupt(void* arg)
 // exit signal handler
 void signalHandler(int signum) {
     // cleanup and close up stuff here  
-    // terminate program  
-    auto hostController = bluetoothDeviceManager->getHostController();
-    hostController->stopScan();
-    auto devices = bluetoothDeviceManager->getDiscoveredDevices();
-    for(const auto& device : devices) {
-        if(device->getMac() == "04:FE:A1:9E:C1:CB") {
-            device->unpair();
-        }
-    }
+    // terminate program
 
     LOG_INFO << "Exiting the main loop";
     g_main_loop_quit(mainloop);

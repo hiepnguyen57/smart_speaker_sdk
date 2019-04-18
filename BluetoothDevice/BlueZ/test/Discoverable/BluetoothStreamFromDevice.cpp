@@ -127,16 +127,7 @@ int beagleboneInterrupt(void* arg)
 void signalHandler(int signum) {
     // cleanup and close up stuff here  
     // terminate program  
-    auto hostController = bluetoothDeviceManager->getHostController();
-    hostController->exitDiscoverableMode();
 
-    auto devices = bluetoothDeviceManager->getDiscoveredDevices();
-    for(const auto& device : devices) {
-        if(device->isConnected()) {
-                LOG_INFO << "Disconnect Command";
-                device->disconnect();
-        }
-    }
     LOG_INFO << "Exiting the main loop";
     g_main_loop_quit(mainloop);
     exit(signum);  

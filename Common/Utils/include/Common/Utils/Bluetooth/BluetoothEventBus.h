@@ -32,7 +32,7 @@ public:
     using ListenerList = std::list<std::weak_ptr<BluetoothEventListenerInterface>>;
 
     /**
-     * Send the event to @c EventBus. Method block untils all the listeners the event. The method is thread safe.
+     * Send the event to @c EventBus. Method block untils all the listeners process the event. The method is thread safe.
      *
      * @param event Event to be sent to @c EventBus.
      */

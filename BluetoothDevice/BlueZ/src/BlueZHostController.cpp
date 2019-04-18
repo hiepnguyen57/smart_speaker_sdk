@@ -211,6 +211,8 @@ void BlueZHostController::onPropertyChanged(const GVariantMapReader& changesMap)
         if(!alias) {
             LOG_ERROR << TAG_BLUEZHOSTCONTROLLER << "reason: nullAlias";
         } else {
+            LOG_DEBUG << TAG_BLUEZHOSTCONTROLLER << "nameChanged. oldName: " << m_friendlyName
+                                                 << "\tnewName: " << alias;
             m_friendlyName = alias;
         }
     }

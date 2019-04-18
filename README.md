@@ -1,11 +1,11 @@
-#Device SDK for smart speaker device
-##Dependencies
+# Device SDK for smart speaker device
+## Dependencies
 This is list of requirement and dependencies for the Device SDK for C++.
 
-##Requirements
+## Requirements
 The device SDK runs on Raspberry Pi, Beaglebone. It requires C++11 or later.
 
-##Bluetooth
+## Bluetooth
 Building with Bluetooth is optional and is currently limited to Raspberry Pi and Beaglebone. `A2DP-SINK`,
 `A2DP-SOURCE`, `AVRCPTarget` and `AVRCPController` profiles are supported.
 

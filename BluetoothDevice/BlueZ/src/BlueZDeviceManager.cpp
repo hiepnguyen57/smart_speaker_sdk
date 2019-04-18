@@ -27,6 +27,9 @@ using namespace common::utils::logger;
 // MediaTransport1 interface property "state"
 static const char* MEDIATRANSPORT_PROPERTY_STATE = "State";
 
+// MediaPlayer1 interface property "status"
+static const char* MEDIAPLAYER_PROPERTY_STATUS = "Status";
+
 // DBus object root path
 static const char* OBJECT_PATH_ROOT = "/";
 
@@ -200,6 +203,18 @@ std::shared_ptr<BlueZBluetoothDevice> BlueZDeviceManager::getDeviceByPath(const 
     return nullptr;
 }
 
+void BlueZDeviceManager::onMediaPlayerPropertyChanged(const std::string& path, const GVariantMapReader& changesMap) {
+    char* status = nullptr;
+    bool statusChanged = changesMap.getCString(MEDIAPLAYER_PROPERTY_STATUS, &status);
+    if(statusChanged) {
+        if(!status) {
+            //nothing here
+        } else {
+            LOG_DEBUG << TAG_BLUEZDEVICEMANAGER << "onMediaPlayerPropertyChanged, currentStatus: " << status;
+        }
+    }
+}
+
 void BlueZDeviceManager::onMediaStreamPropertyChanged(const std::string& path, const GVariantMapReader& changesMap) {
     const std::string FD_KEY = "/fd";
 
@@ -235,6 +250,9 @@ void BlueZDeviceManager::onMediaStreamPropertyChanged(const std::string& path, c
     char* newStateStr;
     common::utils::bluetooth::MediaStreamingState newState;
     if(changesMap.getCString(MEDIATRANSPORT_PROPERTY_STATE, &newStateStr)) {
+
+        LOG_DEBUG << TAG_BLUEZDEVICEMANAGER << "onMediaStreamPropertyChanged, newState: " << newStateStr;
+
         if(newStateStr == STATE_ACTIVE) {
             newState = common::utils::bluetooth::MediaStreamingState::ACTIVE;
         } else if(newStateStr == STATE_PENDING) {
@@ -259,8 +277,8 @@ void BlueZDeviceManager::onMediaStreamPropertyChanged(const std::string& path, c
         return;
     } else if(A2DPSinkInterface::UUID == uuid) {
         if (path != m_mediaEndpoint->getStreamingDevicePath()) {
-            LOG_DEBUG << TAG_BLUEZDEVICEMANAGER << "reason: pathMismatch; path: "
-                      << m_mediaEndpoint->getStreamingDevicePath();
+            // LOG_DEBUG << TAG_BLUEZDEVICEMANAGER << "reason: pathMismatch; path: "
+            //           << m_mediaEndpoint->getStreamingDevicePath();
             return;
         }
 
@@ -396,6 +414,8 @@ void BlueZDeviceManager::onPropertiesChanged(
         onDevicePropertyChanged(objectPath, changesMap);
     } else if(propertyOwner == BlueZConstants::BLUEZ_ADAPTER_INTERFACE) {
         onAdapterPropertyChanged(objectPath, changesMap);
+    } else if(propertyOwner == BlueZConstants::BLUEZ_MEDIA_PLAYER_INTERFACE) {
+        onMediaPlayerPropertyChanged(objectPath, changesMap);
     }
 }
 
@@ -457,6 +477,8 @@ void BlueZDeviceManager::removeDevice(const char* devicePath) {
 }
 
 void BlueZDeviceManager::doShutdown() {
+    LOG_INFO << TAG_BLUEZDEVICEMANAGER << "Clean all before exit";
+
     {
         std::lock_guard<std::mutex> guard(m_devicesMutex);
 

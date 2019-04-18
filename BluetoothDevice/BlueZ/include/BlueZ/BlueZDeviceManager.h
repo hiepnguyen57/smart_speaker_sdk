@@ -129,6 +129,9 @@ private:
     // Handles the A2DP media stream properties changes.
     void onMediaStreamPropertyChanged(const std::string& path, const GVariantMapReader& changesMap);
 
+    // Handles the A2DP media player properties changes.
+    void onMediaPlayerPropertyChanged(const std::string& path, const GVariantMapReader& changesMap);
+
     // Initializes the @c BlueZHostController instance.
     std::shared_ptr<BlueZHostController> initializeHostController();
 

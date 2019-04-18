@@ -504,9 +504,15 @@ void BlueZBluetoothDevice::transitionToState(BlueZDeviceState newState, bool sen
 void BlueZBluetoothDevice::onPropertyChanged(const GVariantMapReader& changesMap) {
     gboolean paired = false;
     bool pairedChanged = changesMap.getBoolean(BLUEZ_DEVICE_PROPERTY_PAIRED.c_str(), &paired);
+    if(pairedChanged) {
+        LOG_DEBUG << TAG_BLUEZBLUETOOTHDEVICE << "pairedChanged: " << paired;
+    }
 
     gboolean connected = false;
     bool connectedChanged = changesMap.getBoolean(BLUEZ_DEVICE_PROPERTY_CONNECTED.c_str(), &connected);
+    if(connectedChanged) {
+        LOG_DEBUG << TAG_BLUEZBLUETOOTHDEVICE << "connectedChanged: " << connected;
+    }
 
     // Changes to the friendlyName on the device will be saved on a new connect
     char* alias = nullptr;
