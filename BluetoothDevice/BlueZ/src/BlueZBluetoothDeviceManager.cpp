@@ -18,7 +18,7 @@ std::list<std::shared_ptr<BluetoothDeviceInterface>> BlueZBluetoothDeviceManager
 std::unique_ptr<BlueZBluetoothDeviceManager> BlueZBluetoothDeviceManager::create(
     std::shared_ptr<BluetoothEventBus> eventBus) {
     auto deviceManager = BlueZDeviceManager::create(eventBus);
-    if (!deviceManager) {
+    if(!deviceManager) {
         return nullptr;
     }
     return std::unique_ptr<BlueZBluetoothDeviceManager>(new BlueZBluetoothDeviceManager(deviceManager));

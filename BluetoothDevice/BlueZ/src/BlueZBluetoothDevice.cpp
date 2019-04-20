@@ -144,7 +144,7 @@ bool BlueZBluetoothDevice::init() {
 bool BlueZBluetoothDevice::initializeServices(const std::unordered_set<std::string>& uuids) {
     for(const auto& uuid : uuids) {
         if(A2DPSourceInterface::UUID == uuid && !serviceExists(uuid)) {
-            LOG_DEBUG << TAG_BLUEZBLUETOOTHDEVICE << "supports: " << A2DPSourceInterface::NAME;
+            //LOG_DEBUG << TAG_BLUEZBLUETOOTHDEVICE << "supports: " << A2DPSourceInterface::NAME;
             auto a2dpSource = BlueZA2DPSource::create(m_deviceManager);
             if(!a2dpSource) {
                 LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "reason: createA2DPFailed";
@@ -154,7 +154,7 @@ bool BlueZBluetoothDevice::initializeServices(const std::unordered_set<std::stri
                 insertService(a2dpSource);
             }
         } else if(AVRCPTargetInterface::UUID == uuid && !serviceExists(uuid)) {
-            LOG_DEBUG << TAG_BLUEZBLUETOOTHDEVICE << "supports: " << AVRCPTargetInterface::NAME;
+            //LOG_DEBUG << TAG_BLUEZBLUETOOTHDEVICE << "supports: " << AVRCPTargetInterface::NAME;
             auto mediaControlProxy = DBusProxy::create(MEDIA_CONTROL_INTERFACE, m_objectPath);
             if(!mediaControlProxy) {
                 LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "reason: nullMediaControlProxy";
@@ -170,7 +170,7 @@ bool BlueZBluetoothDevice::initializeServices(const std::unordered_set<std::stri
                 insertService(avrcpTarget);
             }
         } else if(A2DPSinkInterface::UUID == uuid && !serviceExists(uuid)) {
-            LOG_DEBUG << TAG_BLUEZBLUETOOTHDEVICE << "supports: " << A2DPSinkInterface::NAME;
+            //LOG_DEBUG << TAG_BLUEZBLUETOOTHDEVICE << "supports: " << A2DPSinkInterface::NAME;
             auto a2dpSink = BlueZA2DPSink::create();
             if(!a2dpSink) {
                 LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "reason: createA2DPSinkFailed";
@@ -180,7 +180,7 @@ bool BlueZBluetoothDevice::initializeServices(const std::unordered_set<std::stri
                 insertService(a2dpSink);
             }
         } else if(AVRCPControllerInterface::UUID == uuid && !serviceExists(uuid)) {
-            LOG_DEBUG << TAG_BLUEZBLUETOOTHDEVICE << "supports: " << AVRCPControllerInterface::NAME;
+            //LOG_DEBUG << TAG_BLUEZBLUETOOTHDEVICE << "supports: " << AVRCPControllerInterface::NAME;
             auto avrcpController = BlueZAVRCPController::create();
             if (!avrcpController) {
                 LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "reason: createAVRCPControllerFailed";
@@ -257,7 +257,7 @@ std::string BlueZBluetoothDevice::getObjectPath() const {
 std::unordered_set<std::string> BlueZBluetoothDevice::getServiceUuids(GVariant* array) {
     std::unordered_set<std::string> uuids;
 
-    if (!array) {
+    if(!array) {
         LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "reason: nullArray";
         return uuids;
     } else if (!g_variant_is_of_type(array, G_VARIANT_TYPE_ARRAY)) {
@@ -267,7 +267,7 @@ std::unordered_set<std::string> BlueZBluetoothDevice::getServiceUuids(GVariant* 
 
     GVariantTupleReader arrayReader(array);
     arrayReader.forEach([&uuids](GVariant* variant) {
-        if (!variant) {
+        if(!variant) {
             LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "iteratingArrayFailed, reason: nullVariant";
             return false;
         }
@@ -282,10 +282,9 @@ std::unordered_set<std::string> BlueZBluetoothDevice::getServiceUuids(GVariant* 
 }
 
 std::unordered_set<std::string> BlueZBluetoothDevice::getServiceUuids() {
-
     // DBus returns this as (a{v},). We have to drill into the tuple to retrieve the array.
     ManagedGVariant uuidsTuple;
-    if (!m_propertiesProxy->getVariantProperty(
+    if(!m_propertiesProxy->getVariantProperty(
             BlueZConstants::BLUEZ_DEVICE_INTERFACE, BLUEZ_DEVICE_PROPERTY_UUIDS, &uuidsTuple)) {
         LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "reason: getVariantPropertyFailed";
         return std::unordered_set<std::string>();
@@ -294,7 +293,7 @@ std::unordered_set<std::string> BlueZBluetoothDevice::getServiceUuids() {
     GVariantTupleReader tupleReader(uuidsTuple);
     ManagedGVariant array = tupleReader.getVariant(0).unbox();
 
-    if (!array.hasValue()) {
+    if(!array.hasValue()) {
         // The format isn't what we were expecting. Print the original tuple for debugging.
         LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "reason: unexpectedVariantFormat; variant: " << uuidsTuple.dumpToString(false);
         return std::unordered_set<std::string>();
@@ -306,7 +305,7 @@ std::unordered_set<std::string> BlueZBluetoothDevice::getServiceUuids() {
 bool BlueZBluetoothDevice::isConnected() {
     auto future = m_executor.submit([this] { return executeIsConnected(); });
 
-    if (future.valid()) {
+    if(future.valid()) {
         return future.get();
     } else {
         LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "reason: invalidFuture; action: defaultingFalse";
@@ -334,7 +333,7 @@ bool BlueZBluetoothDevice::executeConnect() {
         LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "error: " << errStr;
 
         // This indicates an issue with authentication, likely the other device has unpaired.
-        if (std::string::npos != errStr.find(BLUEZ_ERROR_RESOURCE_UNAVAILABLE)) {
+        if(std::string::npos != errStr.find(BLUEZ_ERROR_RESOURCE_UNAVAILABLE)) {
             transitionToState(BlueZDeviceState::CONNECTION_FAILED, false);
         }
         return false;        
@@ -345,7 +344,7 @@ bool BlueZBluetoothDevice::executeConnect() {
      * We'll transition to the CONNECTED state directly here. If that signal does come, we simply
      * ignore it because there's no transition when you're already CONNECTED and you see a Connected = true.
      */
-    if (BlueZDeviceState::CONNECTION_FAILED == m_deviceState) {
+    if(BlueZDeviceState::CONNECTION_FAILED == m_deviceState) {
         transitionToState(BlueZDeviceState::CONNECTED, true);
     }
 
@@ -360,7 +359,7 @@ bool BlueZBluetoothDevice::executeDisconnect() {
     ManagedGError error;
     m_deviceProxy->callMethod(BLUEZ_DEVICE_METHOD_DISCONNECT, nullptr, error.toOutputParameter());
 
-    if (error.hasError()) {
+    if(error.hasError()) {
         LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "error: " << error.getMessage();
         return false;
     }
@@ -388,14 +387,14 @@ bool BlueZBluetoothDevice::serviceExists(const std::string& uuid) {
 }
 
 bool BlueZBluetoothDevice::insertService(std::shared_ptr<BluetoothServiceInterface> service) {
-    if (!service) {
+    if(!service) {
         LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "error: nullService";
         return false;
     }
 
     std::shared_ptr<SDPRecordInterface> record = service->getRecord();
 
-    if (!record) {
+    if(!record) {
         LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "error: nullRecord";
         return false;
     }
@@ -406,7 +405,7 @@ bool BlueZBluetoothDevice::insertService(std::shared_ptr<BluetoothServiceInterfa
         success = m_servicesMap.insert({record->getUuid(), service}).second;
     }
 
-    if (!success) {
+    if(!success) {
         LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "error: serviceAlreadyExists";
     }
 
@@ -419,10 +418,11 @@ std::shared_ptr<ServiceType> BlueZBluetoothDevice::getService() {
     {
         std::lock_guard<std::mutex> lock(m_servicesMapMutex);
         auto it = m_servicesMap.find(ServiceType::UUID);
-        if (it == m_servicesMap.end()) {
+        if(it == m_servicesMap.end()) {
             LOG_DEBUG << TAG_BLUEZBLUETOOTHDEVICE << "reason: serviceNotFound";
         } else {
-            // We completely control the types these are going to be, so avoid the overhead of dynamic_pointer_cast.
+            // We completely control the types these are going to be, 
+            // so avoid the overhead of dynamic_pointer_cast.
             service = std::static_pointer_cast<ServiceType>(it->second);
         }
     }
@@ -473,10 +473,10 @@ common::sdkInterfaces::bluetooth::DeviceState BlueZBluetoothDevice::convertToDev
 }
 
 bool BlueZBluetoothDevice::queryDeviceProperty(const std::string& name, bool* value) {
-    if (!value) {
+    if(!value) {
         LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "error: nullValue";
         return false;
-    } else if (!m_propertiesProxy) {
+    } else if(!m_propertiesProxy) {
         LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "error: nullPropertiesProxy";
         return false;
     }
@@ -486,15 +486,15 @@ bool BlueZBluetoothDevice::queryDeviceProperty(const std::string& name, bool* va
 
 void BlueZBluetoothDevice::transitionToState(BlueZDeviceState newState, bool sendEvent) {
     m_deviceState = newState;
-    if (!m_deviceManager) {
+    if(!m_deviceManager) {
         LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "error: nullDeviceManager";
         return;
-    } else if (!m_deviceManager->getEventBus()) {
+    } else if(!m_deviceManager->getEventBus()) {
         LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "error: nullEventBus";
         return;
     }
 
-    if (sendEvent) {
+    if(sendEvent) {
         m_deviceManager->getEventBus()->sendEvent(
             DeviceStateChangedEvent(shared_from_this(), convertToDeviceState(newState)));
     }
@@ -521,7 +521,7 @@ void BlueZBluetoothDevice::onPropertyChanged(const GVariantMapReader& changesMap
 
     if(aliasChanged) {
         // This should never happen. If it does, don't update.
-        if (!alias) {
+        if(!alias) {
             aliasChanged = false;
         } else {
             aliasStr = alias;
@@ -539,7 +539,7 @@ void BlueZBluetoothDevice::onPropertyChanged(const GVariantMapReader& changesMap
     ManagedGVariant uuidsVariant = changesMap.getVariant(BLUEZ_DEVICE_PROPERTY_UUIDS.c_str());
     std::unordered_set<std::string> uuids;
 
-    if (uuidsVariant.hasValue()) {
+    if(uuidsVariant.hasValue()) {
         auto uuids = getServiceUuids(uuidsVariant.get());
         initializeServices(uuids);
 
@@ -557,13 +557,13 @@ void BlueZBluetoothDevice::onPropertyChanged(const GVariantMapReader& changesMap
                        aliasChanged,
                        aliasStr] {
 
-        if (aliasChanged) {
+        if(aliasChanged) {
             m_friendlyName = aliasStr;
         }
 
-        switch (m_deviceState) {
+        switch(m_deviceState) {
             case BlueZDeviceState::FOUND: {
-                if (pairedChanged && paired) {
+                if(pairedChanged && paired) {
                     transitionToState(BlueZDeviceState::PAIRED, true);
                     transitionToState(BlueZDeviceState::IDLE, true);
 
@@ -581,7 +581,7 @@ void BlueZBluetoothDevice::onPropertyChanged(const GVariantMapReader& changesMap
                      * determine connectedness.
                      */
                     bool isConnected = false;
-                    if (queryDeviceProperty(BLUEZ_DEVICE_PROPERTY_CONNECTED, &isConnected) && isConnected &&
+                    if(queryDeviceProperty(BLUEZ_DEVICE_PROPERTY_CONNECTED, &isConnected) && isConnected &&
                         (a2dpSourceAvailable || a2dpSinkAvailable)) {
                         transitionToState(BlueZDeviceState::CONNECTED, true);
                     }
@@ -589,7 +589,7 @@ void BlueZBluetoothDevice::onPropertyChanged(const GVariantMapReader& changesMap
                 break;
             }
             case BlueZDeviceState::IDLE: {
-                if (connectedChanged && connected) {
+                if(connectedChanged && connected) {
                     transitionToState(BlueZDeviceState::CONNECTED, true);
                 } else if (pairedChanged && !paired) {
                     transitionToState(BlueZDeviceState::UNPAIRED, true);
@@ -598,7 +598,7 @@ void BlueZBluetoothDevice::onPropertyChanged(const GVariantMapReader& changesMap
                 break;
             }
             case BlueZDeviceState::CONNECTED: {
-                if (pairedChanged && !paired) {
+                if(pairedChanged && !paired) {
                     transitionToState(BlueZDeviceState::UNPAIRED, true);
                     transitionToState(BlueZDeviceState::FOUND, true);
                 } else if (connectedChanged && !connected) {
@@ -614,7 +614,7 @@ void BlueZBluetoothDevice::onPropertyChanged(const GVariantMapReader& changesMap
                 break;
             }
             case BlueZDeviceState::CONNECTION_FAILED: {
-                if (pairedChanged && !paired) {
+                if(pairedChanged && !paired) {
                     transitionToState(BlueZDeviceState::UNPAIRED, true);
                     transitionToState(BlueZDeviceState::FOUND, true);
                 }

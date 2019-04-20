@@ -140,7 +140,7 @@ bool BlueZDeviceManager::initializeMedia() {
     // Create Media interface proxy to register MediaEndpoint
     m_mediaEndpoint = std::make_shared<MediaEndpoint>(m_connection, DBUS_ENDPOINT_PATH_SINK);
 
-    if (!m_mediaEndpoint->registerWithDBus()) {
+    if(!m_mediaEndpoint->registerWithDBus()) {
         LOG_ERROR << TAG_BLUEZDEVICEMANAGER << "registerEndpointFailed";
         return false;
     }
@@ -172,6 +172,8 @@ bool BlueZDeviceManager::initializeMedia() {
     std::string a2dpSinkUuid = A2DPSinkInterface::UUID;
     std::transform(a2dpSinkUuid.begin(), a2dpSinkUuid.end(), a2dpSinkUuid.begin(), ::toupper);
 
+    LOG_DEBUG << TAG_BLUEZDEVICEMANAGER << "a2dpSinkUuid: " << a2dpSinkUuid;
+
     g_variant_builder_add(b, "{sv}", "UUID", g_variant_new_string(a2dpSinkUuid.c_str()));
     g_variant_builder_add(b, "{sv}", "Codec", g_variant_new_byte(A2DP_CODEC_SBC));
     g_variant_builder_add(b, "{sv}", "Capabilities", caps);
@@ -182,7 +184,7 @@ bool BlueZDeviceManager::initializeMedia() {
     m_mediaProxy->callMethod(
         "RegisterEndpoint", g_variant_new("(o@a{sv})", DBUS_ENDPOINT_PATH_SINK, parameters), error.toOutputParameter());
 
-    if (error.hasError()) {
+    if(error.hasError()) {
         LOG_ERROR << TAG_BLUEZDEVICEMANAGER << "Failed to register MediaEndpoint";
         return false;
     }
@@ -208,7 +210,7 @@ void BlueZDeviceManager::onMediaPlayerPropertyChanged(const std::string& path, c
     bool statusChanged = changesMap.getCString(MEDIAPLAYER_PROPERTY_STATUS, &status);
     if(statusChanged) {
         if(!status) {
-            //nothing here
+            // No any change, ignore the signal
         } else {
             LOG_DEBUG << TAG_BLUEZDEVICEMANAGER << "onMediaPlayerPropertyChanged, currentStatus: " << status;
         }
@@ -276,13 +278,13 @@ void BlueZDeviceManager::onMediaStreamPropertyChanged(const std::string& path, c
         m_eventBus->sendEvent(event);
         return;
     } else if(A2DPSinkInterface::UUID == uuid) {
-        if (path != m_mediaEndpoint->getStreamingDevicePath()) {
+        if(path != m_mediaEndpoint->getStreamingDevicePath()) {
             // LOG_DEBUG << TAG_BLUEZDEVICEMANAGER << "reason: pathMismatch; path: "
             //           << m_mediaEndpoint->getStreamingDevicePath();
             return;
         }
 
-        if (m_streamingState == newState) {
+        if(m_streamingState == newState) {
             return;
         }
 
@@ -379,17 +381,17 @@ void BlueZDeviceManager::propertiesChangedCallback(
     GVariant* prop,
     gpointer deviceManager) {
 
-    if (prop == nullptr) {
+    if(prop == nullptr) {
         LOG_ERROR << TAG_BLUEZDEVICEMANAGER << "propertiesChangedCallbackFailed, reason: variant is null";
         return;
     }
 
-    if (object_path == nullptr) {
+    if(object_path == nullptr) {
         LOG_ERROR << TAG_BLUEZDEVICEMANAGER << "propertiesChangedCallbackFailed, reason: object_path is null";
         return;
     }
 
-    if (deviceManager == nullptr) {
+    if(deviceManager == nullptr) {
         LOG_ERROR << TAG_BLUEZDEVICEMANAGER << "propertiesChangedCallbackFailed, reason: deviceManager is null";
         return;
     }
@@ -408,12 +410,13 @@ void BlueZDeviceManager::onPropertiesChanged(
     const std::string& propertyOwner,
     const std::string& objectPath,
     const GVariantMapReader& changesMap) {
-    if(propertyOwner == BlueZConstants::BLUEZ_MEDIATRANSPORT_INTERFACE) {
-        onMediaStreamPropertyChanged(objectPath, changesMap);
-    } else if(propertyOwner == BlueZConstants::BLUEZ_DEVICE_INTERFACE) {
+
+    if(propertyOwner == BlueZConstants::BLUEZ_DEVICE_INTERFACE) {
         onDevicePropertyChanged(objectPath, changesMap);
     } else if(propertyOwner == BlueZConstants::BLUEZ_ADAPTER_INTERFACE) {
         onAdapterPropertyChanged(objectPath, changesMap);
+    // } else if(propertyOwner == BlueZConstants::BLUEZ_MEDIATRANSPORT_INTERFACE) {
+    //     onMediaStreamPropertyChanged(objectPath, changesMap);
     } else if(propertyOwner == BlueZConstants::BLUEZ_MEDIA_PLAYER_INTERFACE) {
         onMediaPlayerPropertyChanged(objectPath, changesMap);
     }
@@ -482,7 +485,7 @@ void BlueZDeviceManager::doShutdown() {
     {
         std::lock_guard<std::mutex> guard(m_devicesMutex);
 
-        //Disconnect every device.
+        // Disconnect every device.
         for(auto iter : m_devices) {
             std::shared_ptr<BlueZBluetoothDevice> device = iter.second;
             device->disconnect().get();
@@ -548,7 +551,7 @@ bool BlueZDeviceManager::getStateFromBlueZ() {
 
         ManagedGVariant deviceInterfaceVar = supportedInterfacesMap.getVariant(BlueZConstants::BLUEZ_DEVICE_INTERFACE);
         if(deviceInterfaceVar.hasValue()) {
-            //Found a known device
+            // Found a known device
             auto device = addDeviceFromDBusObject(objectPath, deviceInterfaceVar.get());
         }
 
@@ -565,6 +568,7 @@ std::shared_ptr<BlueZBluetoothDevice> BlueZDeviceManager::addDeviceFromDBusObjec
     if(objectPath == nullptr) {
         LOG_ERROR << TAG_BLUEZDEVICEMANAGER << "addDeviceFromDBusObjectFailed, reason: objectPath is null";
     }
+
     if(dbusObject == nullptr) {
         LOG_ERROR << TAG_BLUEZDEVICEMANAGER << "addDeviceFromDBusObjectFailed, reason: dbusObject is null";
     }
@@ -623,7 +627,7 @@ bool BlueZDeviceManager::finalizeMedia() {
     m_mediaProxy->callMethod(
         "UnregisterEndpoint", g_variant_new("(o)", DBUS_ENDPOINT_PATH_SINK), error.toOutputParameter());
 
-    if (error.hasError()) {
+    if(error.hasError()) {
         LOG_ERROR << TAG_BLUEZDEVICEMANAGER << "finalizeMediaFailed; reason: Failed to unregister MediaEndpoint";
         return false;
     }
@@ -683,11 +687,11 @@ void BlueZDeviceManager::mainLoopThread() {
             break;
         }
 
-        if (!initializeMedia()) {
-            LOG_ERROR << TAG_BLUEZDEVICEMANAGER << "initBluetoothMediaFailed";
-            m_mainLoopInitPromise.set_value(false);
-            break;
-        }
+        // if (!initializeMedia()) {
+        //     LOG_ERROR << TAG_BLUEZDEVICEMANAGER << "initBluetoothMediaFailed";
+        //     m_mainLoopInitPromise.set_value(false);
+        //     break;
+        // }
 
         m_pairingAgent = PairingAgent::create(m_connection);
         if(!m_pairingAgent) {
@@ -696,17 +700,18 @@ void BlueZDeviceManager::mainLoopThread() {
             break;
         }
 
-        m_mediaPlayer = MPRISPlayer::create(m_connection, m_mediaProxy, m_eventBus);
-        if(!m_mediaPlayer) {
-            LOG_ERROR << TAG_BLUEZDEVICEMANAGER << "initMediaPlayerFailed";
-            m_mainLoopInitPromise.set_value(false);
-            break;
-        }
+        // m_mediaPlayer = MPRISPlayer::create(m_connection, m_mediaProxy, m_eventBus);
+        // if(!m_mediaPlayer) {
+        //     LOG_ERROR << TAG_BLUEZDEVICEMANAGER << "initMediaPlayerFailed";
+        //     m_mainLoopInitPromise.set_value(false);
+        //     break;
+        // }
 
         m_mainLoopInitPromise.set_value(true);
 
         g_main_loop_run(m_eventLoop);
     } while(false);
+
     g_main_loop_unref(m_eventLoop);
     g_main_context_pop_thread_default(m_workerContext);
     g_main_context_unref(m_workerContext);

@@ -24,7 +24,7 @@ static const std::string NEXT_CMD = "Next";
 static const std::string PREVIOUS_CMD = "Previous";
 
 std::shared_ptr<BlueZAVRCPTarget> BlueZAVRCPTarget::create(std::shared_ptr<DBusProxy> mediaControlProxy) {
-    if (!mediaControlProxy) {
+    if(!mediaControlProxy) {
         LOG_ERROR << TAG_BLUEZAVRCPTARGET << "reason: nullMediaControlProxy";
         return nullptr;
     }
@@ -53,7 +53,7 @@ bool BlueZAVRCPTarget::play() {
     ManagedGError error;
     m_mediaControlProxy->callMethod(PLAY_CMD, nullptr, error.toOutputParameter());
 
-    if (error.hasError()) {
+    if(error.hasError()) {
         LOG_ERROR << TAG_BLUEZAVRCPTARGET << error.getMessage();
         return false;
     }
@@ -67,7 +67,7 @@ bool BlueZAVRCPTarget::pause() {
     ManagedGError error;
     m_mediaControlProxy->callMethod(PAUSE_CMD, nullptr, error.toOutputParameter());
 
-    if (error.hasError()) {
+    if(error.hasError()) {
         LOG_ERROR << TAG_BLUEZAVRCPTARGET << error.getMessage();
         return false;
     }
@@ -81,7 +81,7 @@ bool BlueZAVRCPTarget::next() {
     ManagedGError error;
     m_mediaControlProxy->callMethod(NEXT_CMD, nullptr, error.toOutputParameter());
 
-    if (error.hasError()) {
+    if(error.hasError()) {
         LOG_ERROR << TAG_BLUEZAVRCPTARGET << error.getMessage();
         return false;
     }
@@ -95,7 +95,7 @@ bool BlueZAVRCPTarget::previous() {
     ManagedGError error;
     m_mediaControlProxy->callMethod(PREVIOUS_CMD, nullptr, error.toOutputParameter());
 
-    if (error.hasError()) {
+    if(error.hasError()) {
         LOG_ERROR << TAG_BLUEZAVRCPTARGET << error.getMessage();
         return false;
     }

@@ -128,23 +128,6 @@ inline void OutputToFile::Output(const std::string& msg)
     fflush(pStream);
 }
 
-
-// #include <sys/time.h>
-// inline std::string LogNowTime()
-// {
-//  char buffer[64];
-//  time_t t;
-//  time(&t);
-//  tm r = {0};
-//  strftime(buffer, sizeof(buffer), "%Y-%m-%d  %H:%M:%S", localtime_r(&t, &r));
-//  struct timeval tv;
-//  gettimeofday(&tv, 0);
-//  char result[100] = {0};
-//  //std::sprintf(result, "%s.%03ld", buffer, (long)tv.tv_usec / 1000); 
-//  sprintf(result, "%s.%06ld", buffer, (long)tv.tv_usec / 1000); 
-//  return result;
-// }
-
 } // namespace logger
 } // namespace utils
 } // namespace common

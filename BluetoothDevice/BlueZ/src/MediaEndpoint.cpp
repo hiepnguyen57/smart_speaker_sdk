@@ -316,7 +316,7 @@ void MediaEndpoint::onMediaTransportStateChanged(
     common::utils::bluetooth::MediaStreamingState newState,
     const std::string& devicePath) {
     
-    LOG_DEBUG << TAG_MEDIAENDPOINT << "onMediaTransportStateChanged; devicePath: " << devicePath;
+    LOG_DEBUG << TAG_MEDIAENDPOINT << "onMediaTransportStateChanged; newState: " << newState;
     
     if(m_operatingMode == OperatingMode::RELEASED) {
         // Release the media thread already.
@@ -333,7 +333,7 @@ void MediaEndpoint::onMediaTransportStateChanged(
             DBusProxy::create(BlueZConstants::BLUEZ_MEDIATRANSPORT_INTERFACE, m_streamingDevicePath);
 
         if(!transportProxy) {
-            LOG_ERROR << TAG_MEDIAENDPOINT << "onMediaTransportStateChangedFailed"
+            LOG_ERROR << TAG_MEDIAENDPOINT  << "onMediaTransportStateChangedFailed"
                                             << "reason: Failed to get MediaTransport1 proxy";
             return;
         }
@@ -347,7 +347,7 @@ void MediaEndpoint::onMediaTransportStateChanged(
             LOG_ERROR << TAG_MEDIAENDPOINT << "onMediaTransportStateChangedFailed; reason: Failed to acquire media stream";
             return;
         } else if(!fdList) {
-            LOG_ERROR << TAG_MEDIAENDPOINT << "onMediaTransportStateChangedFailed; reason: nullFdlist; message: " 
+            LOG_ERROR << TAG_MEDIAENDPOINT  << "onMediaTransportStateChangedFailed; reason: nullFdlist; message: " 
                                             << error.getMessage();
             return;
         }
@@ -376,10 +376,10 @@ void MediaEndpoint::onMediaTransportStateChanged(
             return;
         }
 
-        LOG_DEBUG << TAG_MEDIAENDPOINT << "Transport details";
-        LOG_DEBUG << TAG_MEDIAENDPOINT << "File Descriptor Index: " << streamFDIndex
-                                    << "; File Descriptor:  " << streamFD << "; Read MTU: " << readMTU
-                                    << "; write MTU: " << writeMTU;
+        LOG_DEBUG << TAG_MEDIAENDPOINT  << "Transport details.";
+        LOG_DEBUG << TAG_MEDIAENDPOINT  << "File descriptor index: " << streamFDIndex
+                                        << ", file descriptor:  " << streamFD << ", read MTU: " << readMTU
+                                        << ", write MTU: " << writeMTU;
 
         {
             std::lock_guard<std::mutex> modeLock(m_mutex);

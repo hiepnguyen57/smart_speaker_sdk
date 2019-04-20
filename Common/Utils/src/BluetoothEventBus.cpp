@@ -102,11 +102,12 @@ void BluetoothEventBus::removeListener(
                 ++iter;
             }
         }
-        if (listenerList.empty()) {
+        if(listenerList.empty()) {
             m_listenerMap.erase(mapIterator);
         }
     }
 }
+
 }  // namespace bluetooth
 }  // namespace utils
 }  // namespace common

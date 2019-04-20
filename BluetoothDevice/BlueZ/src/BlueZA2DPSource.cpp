@@ -15,7 +15,7 @@ using namespace common::sdkInterfaces::bluetooth::services;
 using namespace common::utils::logger;
 
 std::shared_ptr<BlueZA2DPSource> BlueZA2DPSource::create(std::shared_ptr<BlueZDeviceManager> deviceManager) {
-    if (nullptr == deviceManager) {
+    if(nullptr == deviceManager) {
         LOG_ERROR << TAG_BLUEZA2DPSOURCE << "createFailed, reason: deviceManager is null";
         return nullptr;
     }
