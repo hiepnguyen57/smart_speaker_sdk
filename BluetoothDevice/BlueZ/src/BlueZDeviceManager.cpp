@@ -137,6 +137,9 @@ bool BlueZDeviceManager::init() {
 }
 
 bool BlueZDeviceManager::initializeMedia() {
+
+    LOG_DEBUG << TAG_BLUEZDEVICEMANAGER << "initializeMedia";
+
     // Create Media interface proxy to register MediaEndpoint
     m_mediaEndpoint = std::make_shared<MediaEndpoint>(m_connection, DBUS_ENDPOINT_PATH_SINK);
 
@@ -588,7 +591,6 @@ std::shared_ptr<BlueZBluetoothDevice> BlueZDeviceManager::addDeviceFromDBusObjec
     }
 
     return knownDevice;
-
 }
 
 std::list<std::shared_ptr<common::sdkInterfaces::bluetooth::BluetoothDeviceInterface>> BlueZDeviceManager::

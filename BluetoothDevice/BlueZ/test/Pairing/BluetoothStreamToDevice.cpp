@@ -11,6 +11,8 @@
 #include <BlueZ/BlueZBluetoothDeviceManager.h>
 #include <Common/SDKInterfaces/Bluetooth/BluetoothDeviceManagerInterface.h>
 
+#include <bits/stdc++.h> 
+
 #ifdef RASPBERRYPI_CONFIG
 #include <wiringPi.h>
 #define RASP_BUTTON_PIN 0
@@ -41,18 +43,29 @@ std::shared_ptr<common::sdkInterfaces::bluetooth::BluetoothDeviceManagerInterfac
  * Modify here, pair a device with address XX:XX:XX:XX:XX:XX
  * For Example, Name: JBL Clip 2, MacAddress as 04:FE:A1:9E:C1:CB
  */ 
+int countNumber = 0;
+const char *command;
+
 //The interrupt handler
 #ifdef RASPBERRYPI_CONFIG
 void raspberryInterrupt(void) {
+    if(countNumber > 0) {
+        countNumber = 0;
+        system(command);
+    }
     auto devices = bluetoothDeviceManager->getDiscoveredDevices();
     for(const auto& device : devices) {
         if(device->getMac() == "04:FE:A1:9E:C1:CB") {
-            LOG_INFO << "Pairing device with MacAddres " << device->getMac();
-            if(!device->isPaired()) {
-                //add device on BlueZ dbus
-                device->pair();
+            if(countNumber == 0) {
+                LOG_INFO << "Pairing device with MacAddres " << device->getMac();
+                if(!device->isPaired()) {
+                    //add device on BlueZ dbus
+                    device->pair();
+                }
+                device->connect();
+                countNumber++;
             }
-            device->connect();
+
         }
     }
 }
@@ -88,6 +101,9 @@ void signalHandler(int signum) {
 int main() {
     // register signal SIGINT and signal handler  
     signal(SIGINT, signalHandler);
+
+    std::string mp3 = "mpg123 /home/pi/lalala.mp3";
+    command = mp3.c_str();
 
 #ifdef RASPBERRYPI_CONFIG
     //setup the wiring libary

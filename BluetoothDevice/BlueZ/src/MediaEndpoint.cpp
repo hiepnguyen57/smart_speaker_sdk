@@ -138,11 +138,14 @@ void MediaEndpoint::abortStreaming() {
 // This code in this method is based on a work of Arkadiusz Bokowy licensed under the terms of the MIT license.
 // https://github.com/Arkq/bluez-alsa/blob/88aefeea56b7ea20668796c2c7a8312bf595eef4/src/io.c#L144
 void MediaEndpoint::mediaThread() {
-   pollfd pollStruct = { /* fd */ 0, /* requested events */ POLLIN, /* return events */ 0};
 
-   std::shared_ptr<MediaContext> mediaContext;
+    LOG_DEBUG << TAG_MEDIAENDPOINT << "Configure A2DP SINK";
 
-   while(m_operatingMode != OperatingMode::RELEASED) {
+    pollfd pollStruct = { /* fd */ 0, /* requested events */ POLLIN, /* return events */ 0};
+
+    std::shared_ptr<MediaContext> mediaContext;
+
+    while(m_operatingMode != OperatingMode::RELEASED) {
        // Reset any media context that could still esist.
         {
             std::unique_lock<std::mutex> modeLock(m_mutex);
@@ -315,9 +318,7 @@ void MediaEndpoint::setOperatingMode(OperatingMode mode) {
 void MediaEndpoint::onMediaTransportStateChanged(
     common::utils::bluetooth::MediaStreamingState newState,
     const std::string& devicePath) {
-    
-    LOG_DEBUG << TAG_MEDIAENDPOINT << "onMediaTransportStateChanged; newState: " << newState;
-    
+
     if(m_operatingMode == OperatingMode::RELEASED) {
         // Release the media thread already.
         return;
