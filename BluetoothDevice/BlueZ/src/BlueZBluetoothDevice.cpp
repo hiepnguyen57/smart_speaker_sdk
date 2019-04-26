@@ -145,14 +145,14 @@ bool BlueZBluetoothDevice::initializeServices(const std::unordered_set<std::stri
     for(const auto& uuid : uuids) {
         if(A2DPSourceInterface::UUID == uuid && !serviceExists(uuid)) {
             //LOG_DEBUG << TAG_BLUEZBLUETOOTHDEVICE << "supports: " << A2DPSourceInterface::NAME;
-            auto a2dpSource = BlueZA2DPSource::create(m_deviceManager);
-            if(!a2dpSource) {
-                LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "reason: createA2DPFailed";
-                return false;
-            } else {
-                a2dpSource->setup();
-                insertService(a2dpSource);
-            }
+            // auto a2dpSource = BlueZA2DPSource::create(m_deviceManager);
+            // if(!a2dpSource) {
+            //     LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "reason: createA2DPFailed";
+            //     return false;
+            // } else {
+            //     a2dpSource->setup();
+            //     insertService(a2dpSource);
+            // }
         } else if(AVRCPTargetInterface::UUID == uuid && !serviceExists(uuid)) {
             //LOG_DEBUG << TAG_BLUEZBLUETOOTHDEVICE << "supports: " << AVRCPTargetInterface::NAME;
             auto mediaControlProxy = DBusProxy::create(MEDIA_CONTROL_INTERFACE, m_objectPath);
@@ -171,14 +171,14 @@ bool BlueZBluetoothDevice::initializeServices(const std::unordered_set<std::stri
             }
         } else if(A2DPSinkInterface::UUID == uuid && !serviceExists(uuid)) {
             //LOG_DEBUG << TAG_BLUEZBLUETOOTHDEVICE << "supports: " << A2DPSinkInterface::NAME;
-            auto a2dpSink = BlueZA2DPSink::create();
-            if(!a2dpSink) {
-                LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "reason: createA2DPSinkFailed";
-                return false;
-            } else {
-                a2dpSink->setup();
-                insertService(a2dpSink);
-            }
+            // auto a2dpSink = BlueZA2DPSink::create();
+            // if(!a2dpSink) {
+            //     LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "reason: createA2DPSinkFailed";
+            //     return false;
+            // } else {
+            //     a2dpSink->setup();
+            //     insertService(a2dpSink);
+            // }
         } else if(AVRCPControllerInterface::UUID == uuid && !serviceExists(uuid)) {
             //LOG_DEBUG << TAG_BLUEZBLUETOOTHDEVICE << "supports: " << AVRCPControllerInterface::NAME;
             auto avrcpController = BlueZAVRCPController::create();
@@ -336,7 +336,7 @@ bool BlueZBluetoothDevice::executeConnect() {
         if(std::string::npos != errStr.find(BLUEZ_ERROR_RESOURCE_UNAVAILABLE)) {
             transitionToState(BlueZDeviceState::CONNECTION_FAILED, false);
         }
-        return false;        
+        return false;
     }
 
     /*
@@ -528,99 +528,99 @@ void BlueZBluetoothDevice::onPropertyChanged(const GVariantMapReader& changesMap
         }       
     }
 
-    // This is used for checking connectedness.
-    bool a2dpSourceAvailable = false;
-    bool a2dpSinkAvailable =  false;
+    // // This is used for checking connectedness.
+    // bool a2dpSourceAvailable = false;
+    // bool a2dpSinkAvailable =  false;
 
-    /*
-     * It's not guaranteed all services will be available at construction time.
-     * If any become available at a later time, initialize them.
-     */
-    ManagedGVariant uuidsVariant = changesMap.getVariant(BLUEZ_DEVICE_PROPERTY_UUIDS.c_str());
-    std::unordered_set<std::string> uuids;
+    // /*
+    //  * It's not guaranteed all services will be available at construction time.
+    //  * If any become available at a later time, initialize them.
+    //  */
+    // ManagedGVariant uuidsVariant = changesMap.getVariant(BLUEZ_DEVICE_PROPERTY_UUIDS.c_str());
+    // std::unordered_set<std::string> uuids;
 
-    if(uuidsVariant.hasValue()) {
-        auto uuids = getServiceUuids(uuidsVariant.get());
-        initializeServices(uuids);
+    // if(uuidsVariant.hasValue()) {
+    //     auto uuids = getServiceUuids(uuidsVariant.get());
+    //     initializeServices(uuids);
 
-        a2dpSourceAvailable = (uuids.count(A2DPSourceInterface::UUID) > 0);
-        a2dpSinkAvailable = (uuids.count(A2DPSinkInterface::UUID) > 0);
-    }
+    //     a2dpSourceAvailable = (uuids.count(A2DPSourceInterface::UUID) > 0);
+    //     a2dpSinkAvailable = (uuids.count(A2DPSinkInterface::UUID) > 0);
+    // }
 
-    m_executor.submit([this,
-                       pairedChanged,
-                       paired,
-                       connectedChanged,
-                       connected,
-                       a2dpSourceAvailable,
-                       a2dpSinkAvailable,
-                       aliasChanged,
-                       aliasStr] {
+    // m_executor.submit([this,
+    //                    pairedChanged,
+    //                    paired,
+    //                    connectedChanged,
+    //                    connected,
+    //                    a2dpSourceAvailable,
+    //                    a2dpSinkAvailable,
+    //                    aliasChanged,
+    //                    aliasStr] {
 
-        if(aliasChanged) {
-            m_friendlyName = aliasStr;
-        }
+    //     if(aliasChanged) {
+    //         m_friendlyName = aliasStr;
+    //     }
 
-        switch(m_deviceState) {
-            case BlueZDeviceState::FOUND: {
-                if(pairedChanged && paired) {
-                    transitionToState(BlueZDeviceState::PAIRED, true);
-                    transitionToState(BlueZDeviceState::IDLE, true);
+    //     switch(m_deviceState) {
+    //         case BlueZDeviceState::FOUND: {
+    //             if(pairedChanged && paired) {
+    //                 transitionToState(BlueZDeviceState::PAIRED, true);
+    //                 transitionToState(BlueZDeviceState::IDLE, true);
 
-                    /*
-                     * A connect signal doesn't always mean a device is connected by the BluetoothDeviceInterface
-                     * definition. This sequence has been observed:
-                     *
-                     * 1) Pairing (BlueZ sends Connect = true).
-                     * 2) Pair Successful.
-                     * 3) Connect multimedia services.
-                     * 4) Connect multimedia services successful (BlueZ sends Paired = true, UUIDs = [array of
-                     * uuids]).
-                     *
-                     * Thus we will use the combination of Connect, Paired, and the availability of certain UUIDs to
-                     * determine connectedness.
-                     */
-                    bool isConnected = false;
-                    if(queryDeviceProperty(BLUEZ_DEVICE_PROPERTY_CONNECTED, &isConnected) && isConnected &&
-                        (a2dpSourceAvailable || a2dpSinkAvailable)) {
-                        transitionToState(BlueZDeviceState::CONNECTED, true);
-                    }
-                }
-                break;
-            }
-            case BlueZDeviceState::IDLE: {
-                if(connectedChanged && connected) {
-                    transitionToState(BlueZDeviceState::CONNECTED, true);
-                } else if (pairedChanged && !paired) {
-                    transitionToState(BlueZDeviceState::UNPAIRED, true);
-                    transitionToState(BlueZDeviceState::FOUND, true);
-                }
-                break;
-            }
-            case BlueZDeviceState::CONNECTED: {
-                if(pairedChanged && !paired) {
-                    transitionToState(BlueZDeviceState::UNPAIRED, true);
-                    transitionToState(BlueZDeviceState::FOUND, true);
-                } else if (connectedChanged && !connected) {
-                    transitionToState(BlueZDeviceState::DISCONNECTED, true);
-                    transitionToState(BlueZDeviceState::IDLE, true);
-                }
-                break;
-            }
-            case BlueZDeviceState::UNPAIRED:
-            case BlueZDeviceState::PAIRED:
-            case BlueZDeviceState::DISCONNECTED: {
-                LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "onPropertyChanged; reason: invalidState";
-                break;
-            }
-            case BlueZDeviceState::CONNECTION_FAILED: {
-                if(pairedChanged && !paired) {
-                    transitionToState(BlueZDeviceState::UNPAIRED, true);
-                    transitionToState(BlueZDeviceState::FOUND, true);
-                }
-            }
-        }
-    });
+    //                 /*
+    //                  * A connect signal doesn't always mean a device is connected by the BluetoothDeviceInterface
+    //                  * definition. This sequence has been observed:
+    //                  *
+    //                  * 1) Pairing (BlueZ sends Connect = true).
+    //                  * 2) Pair Successful.
+    //                  * 3) Connect multimedia services.
+    //                  * 4) Connect multimedia services successful (BlueZ sends Paired = true, UUIDs = [array of
+    //                  * uuids]).
+    //                  *
+    //                  * Thus we will use the combination of Connect, Paired, and the availability of certain UUIDs to
+    //                  * determine connectedness.
+    //                  */
+    //                 bool isConnected = false;
+    //                 if(queryDeviceProperty(BLUEZ_DEVICE_PROPERTY_CONNECTED, &isConnected) && isConnected &&
+    //                     (a2dpSourceAvailable || a2dpSinkAvailable)) {
+    //                     transitionToState(BlueZDeviceState::CONNECTED, true);
+    //                 }
+    //             }
+    //             break;
+    //         }
+    //         case BlueZDeviceState::IDLE: {
+    //             if(connectedChanged && connected) {
+    //                 transitionToState(BlueZDeviceState::CONNECTED, true);
+    //             } else if (pairedChanged && !paired) {
+    //                 transitionToState(BlueZDeviceState::UNPAIRED, true);
+    //                 transitionToState(BlueZDeviceState::FOUND, true);
+    //             }
+    //             break;
+    //         }
+    //         case BlueZDeviceState::CONNECTED: {
+    //             if(pairedChanged && !paired) {
+    //                 transitionToState(BlueZDeviceState::UNPAIRED, true);
+    //                 transitionToState(BlueZDeviceState::FOUND, true);
+    //             } else if (connectedChanged && !connected) {
+    //                 transitionToState(BlueZDeviceState::DISCONNECTED, true);
+    //                 transitionToState(BlueZDeviceState::IDLE, true);
+    //             }
+    //             break;
+    //         }
+    //         case BlueZDeviceState::UNPAIRED:
+    //         case BlueZDeviceState::PAIRED:
+    //         case BlueZDeviceState::DISCONNECTED: {
+    //             LOG_ERROR << TAG_BLUEZBLUETOOTHDEVICE << "onPropertyChanged; reason: invalidState";
+    //             break;
+    //         }
+    //         case BlueZDeviceState::CONNECTION_FAILED: {
+    //             if(pairedChanged && !paired) {
+    //                 transitionToState(BlueZDeviceState::UNPAIRED, true);
+    //                 transitionToState(BlueZDeviceState::FOUND, true);
+    //             }
+    //         }
+    //     }
+    // });
 }
 
 } // namespace blueZ

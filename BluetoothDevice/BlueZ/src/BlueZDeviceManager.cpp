@@ -106,11 +106,11 @@ bool BlueZDeviceManager::init() {
         return false;
     }
 
-    m_mediaProxy = DBusProxy::create(BlueZConstants::BLUEZ_MEDIA_INTERFACE, m_adapterPath);
-    if(m_mediaProxy == nullptr) {
-        LOG_ERROR << TAG_BLUEZDEVICEMANAGER << "initializeMediaFailed; reason: Failed to create Media Proxy";
-        return false;
-    }
+    // m_mediaProxy = DBusProxy::create(BlueZConstants::BLUEZ_MEDIA_INTERFACE, m_adapterPath);
+    // if(m_mediaProxy == nullptr) {
+    //     LOG_ERROR << TAG_BLUEZDEVICEMANAGER << "initializeMediaFailed; reason: Failed to create Media Proxy";
+    //     return false;
+    // }
 
     m_workerContext = g_main_context_new();
     if(m_workerContext == nullptr) {
@@ -498,9 +498,9 @@ void BlueZDeviceManager::doShutdown() {
     }
 
     // Destroy all objects requiring m_connection firts.
-    finalizeMedia();
+    //finalizeMedia();
     m_pairingAgent.reset();
-    m_mediaPlayer.reset();
+    //m_mediaPlayer.reset();
 
     m_connection->close();
     if(m_eventLoop) {
