@@ -7,7 +7,7 @@ namespace common {
 namespace utils {
 namespace threading {
 
-#define TAG_TASKTHREAD          "TaskThread\t"
+static const std::string TAG_TASKTHREAD = "TaskThread\t";
 
 using namespace logger;
 

@@ -8,7 +8,7 @@ namespace bluetooth {
 
 using namespace logger;
 
-#define TAG_FORMATTEDAUDIO          "FormattedAudioStreamAdapter\t"
+static const std::string TAG_FORMATTEDAUDIO = "FormattedAudioStreamAdapter\t";
 
 FormattedAudioStreamAdapter::FormattedAudioStreamAdapter(const AudioFormat& audioFormat) {
     m_audioFormat = audioFormat;

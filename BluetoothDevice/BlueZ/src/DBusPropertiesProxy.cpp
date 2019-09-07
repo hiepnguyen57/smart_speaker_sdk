@@ -10,7 +10,7 @@ namespace blueZ {
 
 using namespace common::utils::logger;
 
-#define TAG_DBUSPROPERTIESPROXY                 "DBusPropertiesProxy\t"
+static const std::string TAG_DBUSPROPERTIESPROXY = "DBusPropertiesProxy\t";
 
 DBusPropertiesProxy::DBusPropertiesProxy(GDBusProxy* proxy, const std::string& objectPath) :
     DBusProxy(proxy, objectPath) {

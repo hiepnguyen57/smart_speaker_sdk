@@ -10,7 +10,7 @@ namespace blueZ {
 
 using namespace common::utils::logger;
 
-#define TAG_DBUSPROXY               "DBusProxy\t"
+static const std::string TAG_DBUSPROXY = "DBusProxy\t";
 
 static const int PROXY_DEFAULT_TIMEOUT = -1;
 

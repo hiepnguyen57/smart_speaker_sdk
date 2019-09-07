@@ -9,7 +9,7 @@ namespace blueZ {
 
 using namespace common::utils::logger;
 
-#define TAG_DBUSCONNECTION              "DBusConnection\t"
+static const std::string TAG_DBUSCONNECTION = "DBusConnection\t";
 
 GDBusConnection* DBusConnection::getGDBusConnection() {
     return m_connection;

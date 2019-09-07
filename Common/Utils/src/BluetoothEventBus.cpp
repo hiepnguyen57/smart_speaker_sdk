@@ -8,7 +8,7 @@ namespace bluetooth {
 
 using namespace logger;
 
-#define TAG_BLUETOOTHEVENTBUS       "BluetoothEventBus\t"
+static const std::string TAG_BLUETOOTHEVENTBUS = "BluetoothEventBus\t";
 
 BluetoothEventBus::BluetoothEventBus() {
 

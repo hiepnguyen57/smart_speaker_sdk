@@ -24,6 +24,8 @@ using namespace common::utils;
 using namespace common::utils::bluetooth;
 using namespace common::utils::logger;
 
+static const std::string TAG_BLUEZDEVICEMANAGER = "BlueZDeviceManager\t";
+
 // MediaTransport1 interface property "state"
 static const char* MEDIATRANSPORT_PROPERTY_STATE = "State";
 
@@ -65,8 +67,6 @@ static const std::string STATE_IDLE = "idle";
  * BlueZ A2DP streaming state when audio data is streaming from the device and we are reading it.
  */
 static const std::string STATE_ACTIVE = "active";
-
-#define TAG_BLUEZDEVICEMANAGER          "BlueZDeviceManager\t"
 
 std::shared_ptr<BlueZDeviceManager> BlueZDeviceManager::create(
     std::shared_ptr<common::utils::bluetooth::BluetoothEventBus> eventBus) {

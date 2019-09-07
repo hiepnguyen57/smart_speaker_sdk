@@ -10,7 +10,7 @@ namespace utils {
 
 using namespace logger;
 
-#define TAG_REQUIRESSHUTDOWN            "RequiresShutdown\t"
+static const std::string TAG_REQUIRESSHUTDOWN = "RequiresShutdown\t";
 
 // Class used to track whether @c RequiresShutdown objects have been shut down correctly.
 class ShutdownMonitor {

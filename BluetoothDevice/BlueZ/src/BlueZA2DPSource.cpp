@@ -8,7 +8,7 @@ namespace deviceClientSDK {
 namespace bluetoothDevice {
 namespace blueZ {
 
-#define TAG_BLUEZA2DPSOURCE             "BlueZA2DPSource\t"
+static const std::string TAG_BLUEZA2DPSOURCE = "BlueZA2DPSource\t";
 
 using namespace common::utils;
 using namespace common::sdkInterfaces::bluetooth::services;

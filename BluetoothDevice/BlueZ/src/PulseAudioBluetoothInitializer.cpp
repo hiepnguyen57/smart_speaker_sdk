@@ -8,7 +8,7 @@ namespace deviceClientSDK {
 namespace bluetoothDevice {
 namespace blueZ {
 
-#define TAG_PULSEAUDIO          "PulseAudioBluetooth\t"
+static const std::string TAG_PULSEAUDIO = "PulseAudioBluetooth\t";
 
 using namespace common::utils::bluetooth;
 using namespace common::utils::logger;

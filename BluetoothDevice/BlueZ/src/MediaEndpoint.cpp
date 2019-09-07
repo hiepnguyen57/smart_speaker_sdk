@@ -13,7 +13,7 @@ namespace blueZ {
 
 using namespace common::utils::logger;
 
-#define TAG_MEDIAENDPOINT           "MediaEndpoint\t"
+static const std::string TAG_MEDIAENDPOINT = "MediaEndpoint\t";
 
 // General error for DBus methods.
 constexpr const char* DBUS_ERROR_FAILED = "org.bluez.Error.Rejected";

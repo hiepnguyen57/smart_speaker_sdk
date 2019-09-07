@@ -13,7 +13,7 @@ namespace blueZ {
 
 using namespace common::utils::logger;
 
-#define TAG_PAIRINGAGENT            "PairingAgent\t"
+static const std::string TAG_PAIRINGAGENT = "PairingAgent\t";
 
 // The path we register the PairingAgent object under.
 static const std::string AGENT_OBJECT_PATH = "/tmp/Agent";

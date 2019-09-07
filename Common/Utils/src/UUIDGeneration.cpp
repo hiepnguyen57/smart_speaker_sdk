@@ -17,7 +17,7 @@ namespace uuidGeneration {
 
 using namespace logger;
 
-#define TAG_UUIDGENERATION                  "UUIDGeneration\t"
+static const std::string TAG_UUIDGENERATION = "UUIDGeneration\t";
 
 /// The UUID version (Version 4), shifted into the correct position in the byte.
 static const uint8_t UUID_VERSION_VALUE = 4 << 4;

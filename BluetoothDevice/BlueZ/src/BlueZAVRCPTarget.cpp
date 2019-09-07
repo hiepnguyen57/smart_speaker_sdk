@@ -5,11 +5,11 @@ namespace deviceClientSDK {
 namespace bluetoothDevice {
 namespace blueZ {
 
-#define TAG_BLUEZAVRCPTARGET        "BlueZAVRCPTarget\t"
-
 using namespace common::utils;
 using namespace common::sdkInterfaces::bluetooth::services;
 using namespace common::utils::logger;
+
+static const std::string TAG_BLUEZAVRCPTARGET = "BlueZAVRCPTarget\t";
 
 /// The AVRCP Play command.
 static const std::string PLAY_CMD = "Play";

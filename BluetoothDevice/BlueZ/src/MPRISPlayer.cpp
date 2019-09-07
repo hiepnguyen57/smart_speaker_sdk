@@ -15,7 +15,7 @@ using namespace common::sdkInterfaces::bluetooth::services;
 using namespace common::utils::bluetooth;
 using namespace common::utils::logger;
 
-#define TAG_MPRISPLAYER         "MPRISPlayer\t"
+static const std::string TAG_MPRISPLAYER = "MPRISPlayer\t";
 
 /// Property indicating whether this player supports the Next functionality.
 static const std::string CAN_GO_NEXT = "CanGoNext";

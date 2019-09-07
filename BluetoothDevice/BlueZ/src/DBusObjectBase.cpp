@@ -9,7 +9,7 @@ namespace blueZ {
 
 using namespace common::utils::logger;
 
-#define TAG_DBUSOBJECTBASE              "DBusObjectBase\t"
+static const std::string TAG_DBUSOBJECTBASE = "DBusObjectBase\t";
 
 DBusObjectBase::~DBusObjectBase() {
     unregisterObject();

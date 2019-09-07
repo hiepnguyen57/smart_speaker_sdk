@@ -3,7 +3,7 @@
 #include <memory>
 #include "Common/Utils/Logger/Log.h"
 
-#define TAG_LOGGER_TEST         "[LoggerTest]\t"
+static const std::string TAG_LOGGER_TEST = "[LoggerTest]\t";
 
 using namespace std;
 using namespace deviceClientSDK::common::utils::logger;

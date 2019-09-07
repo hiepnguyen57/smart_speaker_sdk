@@ -10,7 +10,7 @@ namespace blueZ {
 
 using namespace common::utils::logger;
 
-#define TAG_BLUEZHOSTCONTROLLER             "BlueZHostController\t"
+static const std::string TAG_BLUEZHOSTCONTROLLER = "BlueZHostController\t";
 
 // String to identify name property.
 static const std::string ALIAS_PROPERTY = "Alias";

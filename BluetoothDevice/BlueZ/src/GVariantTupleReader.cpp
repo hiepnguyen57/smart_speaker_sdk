@@ -8,7 +8,7 @@ namespace blueZ {
 
 using namespace common::utils::logger;
 
-#define TAG_GVARIANTTUPLEREADER         "GVariantTupleReader\t"
+static const std::string TAG_GVARIANTTUPLEREADER = "GVariantTupleReader\t";
 
 bool GVariantTupleReader::forEach(std::function<bool(GVariant* value)> iteratorFunction) const {
     if(m_tuple == nullptr) {

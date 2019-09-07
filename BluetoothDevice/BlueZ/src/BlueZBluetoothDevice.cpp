@@ -19,7 +19,7 @@ using namespace common::sdkInterfaces::bluetooth;
 using namespace common::sdkInterfaces::bluetooth::services;
 using namespace common::utils::logger;
 
-#define TAG_BLUEZBLUETOOTHDEVICE            "BlueZBluetoothDevice\t"
+static const std::string TAG_BLUEZBLUETOOTHDEVICE = "BlueZBluetoothDevice\t";
 
 // The Name property that BlueZ uses.
 static const std::string BLUEZ_DEVICE_PROPERTY_ALIAS = "Alias";

@@ -8,7 +8,7 @@ namespace blueZ {
 
 using namespace common::utils::logger;
 
-#define TAG_GVARIANTMAPREADER           "GVariantMapReader\t"
+static const std::string TAG_GVARIANTMAPREADER = "GVariantMapReader\t";
 
 bool GVariantMapReader::forEach(std::function<bool(char* key, GVariant* value)> iteratorFunction) const {
     if(m_map == nullptr) {
