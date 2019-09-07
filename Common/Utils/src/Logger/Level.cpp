@@ -1,5 +1,6 @@
 #include <cassert>
 #include <unordered_map>
+
 #include "Common/Utils/Logger/Level.h"
 
 namespace deviceClientSDK {
@@ -13,14 +14,14 @@ namespace logger {
         return #name;
 
 std::string convertLevelToName(Level level) {
-	switch(level) {
+    switch(level) {
         LEVEL_TO_NAME(DEBUG)
         LEVEL_TO_NAME(INFO)
         LEVEL_TO_NAME(WARN)
         LEVEL_TO_NAME(ERROR)
         LEVEL_TO_NAME(CRITICAL)
         LEVEL_TO_NAME(NONE)
-        LEVEL_TO_NAME(UNKNOWN)  
+        LEVEL_TO_NAME(UNKNOWN)
     }
     return "UNKNOWN";
 }

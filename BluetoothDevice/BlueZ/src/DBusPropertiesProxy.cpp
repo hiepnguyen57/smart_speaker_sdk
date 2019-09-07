@@ -42,6 +42,7 @@ bool DBusPropertiesProxy::getBooleanProperty(const std::string& interface, const
         LOG_ERROR << TAG_DBUSPROPERTIESPROXY << "getBooleanPropertyFailed, reason: result is null";
         return false;
     }
+
     ManagedGError error;
     ManagedGVariant varResult = callMethod("Get", g_variant_new("(ss)", interface.c_str(), property.c_str()), error.toOutputParameter());
 

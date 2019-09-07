@@ -30,6 +30,7 @@ DBusObjectBase::DBusObjectBase(
 void DBusObjectBase::onMethodCalledInternal(const char* methodName) {
 
 }
+
 void DBusObjectBase::unregisterObject() {
     if(m_registrationId > 0) {
         g_dbus_connection_unregister_object(m_connection->getGDBusConnection(), m_registrationId);

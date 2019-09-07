@@ -172,8 +172,6 @@ bool BlueZDeviceManager::initializeMedia() {
     std::string a2dpSinkUuid = A2DPSinkInterface::UUID;
     std::transform(a2dpSinkUuid.begin(), a2dpSinkUuid.end(), a2dpSinkUuid.begin(), ::toupper);
 
-    LOG_DEBUG << TAG_BLUEZDEVICEMANAGER << "a2dpSinkUuid: " << a2dpSinkUuid;
-
     g_variant_builder_add(b, "{sv}", "UUID", g_variant_new_string(a2dpSinkUuid.c_str()));
     g_variant_builder_add(b, "{sv}", "Codec", g_variant_new_byte(A2DP_CODEC_SBC));
     g_variant_builder_add(b, "{sv}", "Capabilities", caps);
@@ -687,11 +685,11 @@ void BlueZDeviceManager::mainLoopThread() {
             break;
         }
 
-        // if (!initializeMedia()) {
-        //     LOG_ERROR << TAG_BLUEZDEVICEMANAGER << "initBluetoothMediaFailed";
-        //     m_mainLoopInitPromise.set_value(false);
-        //     break;
-        // }
+        if (!initializeMedia()) {
+            LOG_ERROR << TAG_BLUEZDEVICEMANAGER << "initBluetoothMediaFailed";
+            m_mainLoopInitPromise.set_value(false);
+            break;
+        }
 
         m_pairingAgent = PairingAgent::create(m_connection);
         if(!m_pairingAgent) {

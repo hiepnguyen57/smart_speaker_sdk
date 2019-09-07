@@ -32,7 +32,7 @@ static const std::string STOP_SCAN = "StopDiscovery";
 
 using namespace common::utils;
 
-// A fallback device name.
+// A callback device name.
 static const std::string DEFAULT_NAME = "Device";
 
 static bool truncate(const std::unique_ptr<MacAddressString>& mac, std::string* truncatedMac) {
@@ -91,7 +91,7 @@ bool BlueZHostController::init() {
 
     m_adapterProperties = DBusPropertiesProxy::create(m_adapterObjectPath);
     if(!m_adapterProperties) {
-        LOG_ERROR << TAG_BLUEZHOSTCONTROLLER << "reason: createPropertiesProxyFailed";
+        LOG_ERROR << TAG_BLUEZHOSTCONTROLLER << "reason: createAdapterPropertiesProxyFailed";
         return false;       
     }
 

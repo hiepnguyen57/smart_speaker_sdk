@@ -118,6 +118,7 @@ ManagedGVariant GVariantTupleReader::getVariant(gsize index) const {
     value = g_variant_get_child_value(m_tuple, index);
     return ManagedGVariant(value);
 }
+
 gsize GVariantTupleReader::size() const {
      if(m_tuple == nullptr) {
         LOG_ERROR << TAG_GVARIANTTUPLEREADER << "sizeFailed, reason: m_tuple is null";
@@ -125,6 +126,7 @@ gsize GVariantTupleReader::size() const {
     }
     return g_variant_n_children(m_tuple);    
 }
+
 GVariantTupleReader::GVariantTupleReader(const GVariantTupleReader& other) {
     m_tuple = other.m_tuple;
     if(m_tuple != nullptr) {

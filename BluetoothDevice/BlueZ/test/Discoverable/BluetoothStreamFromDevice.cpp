@@ -13,11 +13,11 @@
 
 #ifdef RASPBERRYPI_CONFIG
 #include <wiringPi.h>
-#define RASP_BUTTON_PIN 0
+#define RASP_BUTTON_PIN 0 //GPIO17 (GPIO_GEN0)
 #else
 #include "libsoc_gpio.h"
 #include "libsoc_debug.h"
-#define BBB_GPIO_INPUT   7
+#define BBB_GPIO_INPUT   7 // P9_42
 #endif
 
 using namespace std;
@@ -90,7 +90,7 @@ int beagleboneInterrupt(void* arg)
             auto avrcpTarget = device->getAVRCPTarget();
             if(!avrcpTarget) {
                 LOG_ERROR << "AVRCP not supported";
-                return;
+                return -1;
             }
             switch(countNumber) {
                 case 0:
@@ -121,6 +121,7 @@ int beagleboneInterrupt(void* arg)
     if(countNumber > 4) {
         countNumber = 0;
     }
+    return 0;
 }
 #endif
 

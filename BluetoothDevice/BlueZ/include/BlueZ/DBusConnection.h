@@ -10,6 +10,7 @@
 namespace deviceClientSDK {
 namespace bluetoothDevice {
 namespace blueZ {
+
 /**
  * A wrapper around DBus connection object.
  */

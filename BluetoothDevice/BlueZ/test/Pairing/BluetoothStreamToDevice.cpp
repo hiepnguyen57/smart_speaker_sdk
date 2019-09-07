@@ -11,6 +11,8 @@
 #include <BlueZ/BlueZBluetoothDeviceManager.h>
 #include <Common/SDKInterfaces/Bluetooth/BluetoothDeviceManagerInterface.h>
 
+#include <bits/stdc++.h> 
+
 #ifdef RASPBERRYPI_CONFIG
 #include <wiringPi.h>
 #define RASP_BUTTON_PIN 0
@@ -31,6 +33,7 @@ using namespace deviceClientSDK::common::utils::logger;
 std::shared_ptr<bluetoothDevice::blueZ::PulseAudioBluetoothInitializer> m_pulseAudioInitializer;
 #endif
 
+char *MacAddressDevice;
 static GMainLoop *mainloop = NULL;
 
 //create the BluetoothDeviceManager to communicate with the Bluetooth stack.
@@ -41,12 +44,13 @@ std::shared_ptr<common::sdkInterfaces::bluetooth::BluetoothDeviceManagerInterfac
  * Modify here, pair a device with address XX:XX:XX:XX:XX:XX
  * For Example, Name: JBL Clip 2, MacAddress as 04:FE:A1:9E:C1:CB
  */ 
+
 //The interrupt handler
 #ifdef RASPBERRYPI_CONFIG
 void raspberryInterrupt(void) {
     auto devices = bluetoothDeviceManager->getDiscoveredDevices();
     for(const auto& device : devices) {
-        if(device->getMac() == "04:FE:A1:9E:C1:CB") {
+        if(device->getMac() == MacAddressDevice) {
             LOG_INFO << "Pairing device with MacAddres " << device->getMac();
             if(!device->isPaired()) {
                 //add device on BlueZ dbus
@@ -61,7 +65,7 @@ int beagleboneInterrupt(void* arg)
 {
     auto devices = bluetoothDeviceManager->getDiscoveredDevices();
     for(const auto& device : devices) {
-        if(device->getMac() == "04:FE:A1:9E:C1:CB") {
+        if(device->getMac() == MacAddressDevice) {
             LOG_INFO << "Pairing device with MacAddres " << device->getMac();
             if(!device->isPaired()) {
                 //add device on BlueZ dbus
@@ -85,7 +89,15 @@ void signalHandler(int signum) {
     exit(signum);  
 }
 
-int main() {
+int main(int argc, char* argv[]) {
+    if(argc == 1) {
+        LOG_INFO << "Please Enter the mac address of device which you want to connect";
+        return -1;
+    }
+    else {
+        LOG_DEBUG << "MaccAddress: " << argv[1];
+        MacAddressDevice = argv[1];
+    }
     // register signal SIGINT and signal handler  
     signal(SIGINT, signalHandler);
 

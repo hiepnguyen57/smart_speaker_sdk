@@ -15,8 +15,7 @@ using namespace common::utils::logger;
 static const int PROXY_DEFAULT_TIMEOUT = -1;
 
 DBusProxy::DBusProxy(GDBusProxy *proxy, const std::string& objectPath) : m_proxy{proxy}, m_objectPath{objectPath} {
-
-} 
+}
 
 DBusProxy::~DBusProxy() {
     if(m_proxy) {

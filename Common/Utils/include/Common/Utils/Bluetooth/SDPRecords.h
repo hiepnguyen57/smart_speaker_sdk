@@ -9,7 +9,7 @@ namespace common {
 namespace utils {
 namespace bluetooth {
 
-/// Base class for an SDPRecord object used.
+// Base class for an SDPRecord object used.
 class SDPRecord : public sdkInterfaces::bluetooth::services::SDPRecordInterface {
 public:
     /**
@@ -39,17 +39,17 @@ public:
     std::string getVersion() const override;
 
 protected:
-    /// The service name.
+    // The service name.
     const std::string m_name;
 
-    /// The 128-bit UUID.
+    // The 128-bit UUID.
     const std::string m_uuid;
 
-    /// The version.
+    // The version.
     const std::string m_version;
 };
 
-/// A SDP record representing A2DPSource.
+// A SDP record representing A2DPSource.
 class A2DPSourceRecord : public SDPRecord {
 public:
     /**
@@ -60,7 +60,7 @@ public:
     A2DPSourceRecord(const std::string& version);
 };
 
-/// A SDP record representing A2DPSink.
+// A SDP record representing A2DPSink.
 class A2DPSinkRecord : public SDPRecord {
 public:
     /**
@@ -71,7 +71,7 @@ public:
     A2DPSinkRecord(const std::string& version);
 };
 
-/// A SDP record representing AVRCPTarget.
+// A SDP record representing AVRCPTarget.
 class AVRCPTargetRecord : public SDPRecord {
 public:
     /**
@@ -82,7 +82,7 @@ public:
     AVRCPTargetRecord(const std::string& version);
 };
 
-/// A SDP record representing AVRCPController.
+// A SDP record representing AVRCPController.
 class AVRCPControllerRecord : public SDPRecord {
 public:
     /**

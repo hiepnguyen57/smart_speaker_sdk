@@ -113,6 +113,8 @@ std::unique_ptr<MPRISPlayer> MPRISPlayer::create(
         return nullptr;
     }
 
+    LOG_DEBUG << TAG_MPRISPLAYER << "Create MPRISPlayer";
+
     auto mediaPlayer = std::unique_ptr<MPRISPlayer>(new MPRISPlayer(connection, media, eventBus, playerPath));
     if (!mediaPlayer->init()) {
         LOG_ERROR << TAG_MPRISPLAYER << "reason: initFailed";

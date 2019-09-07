@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 project(BluetoothStreamToDevice)
 
 option(BLUETOOTH_BLUEZ_PULSEAUDIOINITIALIZER "Override Pulseaudio BlueZ Endpoints with SDK ones" OFF)
-option(RASPBERRYPI_CONFIG "Choose demo on RaspberryPi or Beaglebone" ON)
+option(RASPBERRYPI_CONFIG "Choose demo on RaspberryPi or Beaglebone" OFF)
 
 #add_definitions(-DFILE_LOGGER)
 #add_definitions(-DNDEBUG)

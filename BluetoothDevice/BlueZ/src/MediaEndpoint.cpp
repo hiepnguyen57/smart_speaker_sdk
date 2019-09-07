@@ -116,6 +116,7 @@ MediaEndpoint::MediaEndpoint(std::shared_ptr<DBusConnection> connection, const s
         m_endpointPath{endpointPath},
         m_operatingModeChanged{false},
         m_operatingMode{OperatingMode::INACTIVE} {
+
     m_thread = std::thread(&MediaEndpoint::mediaThread, this);
 }
 
@@ -138,11 +139,12 @@ void MediaEndpoint::abortStreaming() {
 // This code in this method is based on a work of Arkadiusz Bokowy licensed under the terms of the MIT license.
 // https://github.com/Arkq/bluez-alsa/blob/88aefeea56b7ea20668796c2c7a8312bf595eef4/src/io.c#L144
 void MediaEndpoint::mediaThread() {
-   pollfd pollStruct = { /* fd */ 0, /* requested events */ POLLIN, /* return events */ 0};
 
-   std::shared_ptr<MediaContext> mediaContext;
+    pollfd pollStruct = { /* fd */ 0, /* requested events */ POLLIN, /* return events */ 0};
 
-   while(m_operatingMode != OperatingMode::RELEASED) {
+    std::shared_ptr<MediaContext> mediaContext;
+
+    while(m_operatingMode != OperatingMode::RELEASED) {
        // Reset any media context that could still esist.
         {
             std::unique_lock<std::mutex> modeLock(m_mutex);
@@ -272,7 +274,7 @@ void MediaEndpoint::mediaThread() {
 
             size_t writeSize = output - m_sbcBuffer.data();
 
-            // Check if wea are still in SINK mode
+            // Check if we are still in SINK mode
             if(m_operatingMode != OperatingMode::SINK) {
                 break;
             }
@@ -315,9 +317,7 @@ void MediaEndpoint::setOperatingMode(OperatingMode mode) {
 void MediaEndpoint::onMediaTransportStateChanged(
     common::utils::bluetooth::MediaStreamingState newState,
     const std::string& devicePath) {
-    
-    LOG_DEBUG << TAG_MEDIAENDPOINT << "onMediaTransportStateChanged; newState: " << newState;
-    
+
     if(m_operatingMode == OperatingMode::RELEASED) {
         // Release the media thread already.
         return;

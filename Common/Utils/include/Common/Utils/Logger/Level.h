@@ -8,7 +8,6 @@ namespace common {
 namespace utils {
 namespace logger {
 
-
 /**
  * Enum used to specify the severity assigned to a log message.
  */
@@ -26,7 +25,7 @@ enum class Level {
 	//Level used to disable all logging.
 	NONE,
 	// An unknown severity level.
-	UNKNOWN
+	UNKNOWN   
 };
 
 /**

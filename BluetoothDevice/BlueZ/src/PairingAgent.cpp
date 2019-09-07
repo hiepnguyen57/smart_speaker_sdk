@@ -13,12 +13,12 @@ namespace blueZ {
 
 using namespace common::utils::logger;
 
-#define TAG_PAIRINGAGENT "PairingAgent\t"
+#define TAG_PAIRINGAGENT            "PairingAgent\t"
 
 // The path we register the PairingAgent object under.
 static const std::string AGENT_OBJECT_PATH = "/tmp/Agent";
 
-// See https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/agent-api.txt 
+// See https://git.kernel.org/pub/scm/bluetooth/bluez.git/tree/doc/agent-api.txt
 // for more details.
 static const std::string CAPABILITY = "NoInputNoOutput";
 static const std::string RELEASE = "Release";
@@ -31,16 +31,16 @@ static const std::string REQUEST_AUTHORIZATION = "RequestAuthorization";
 static const std::string AUTHORIZE_SERVICE = "AuthorizeService";
 static const std::string CANCEL = "Cancel";
 
-// Bluez Identifier.
+// BlueZ Indentifier.
 static const std::string BLUEZ_OBJECT_PATH = "/org/bluez";
 
-// Default keypass
+// Default keypass.
 const uint32_t DEFAULT_KEYPASS = 0;
 
 // Default pincode
 const char* DEFAULT_PINCODE = "0000";
 
-// The introspect XML we ue to create the DBus object.
+// The introspect XML we use to create the DBus object.
 const char INTROSPECT_XML[] = R"(
 <!DOCTYPE node PUBLIC -//freedesktop//DTD D-BUS Object Introspection 1.0//EN
     "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd";>
@@ -126,7 +126,7 @@ bool PairingAgent::init() {
         return false;
     }
 
-    return registerAgent() && requestDefaultAgent();
+    return registerAgent() && registerDefaultAgent();
 }
 
 PairingAgent::~PairingAgent() {
@@ -175,7 +175,7 @@ void PairingAgent::cancel(GVariant* arguments, GDBusMethodInvocation* invocation
     g_dbus_method_invocation_return_value(invocation, nullptr);
 }
 
-bool PairingAgent::requestDefaultAgent() {
+bool PairingAgent::registerDefaultAgent() {
     ManagedGError error;
 
     auto parameters = g_variant_new("(o)", AGENT_OBJECT_PATH.c_str());
@@ -184,6 +184,7 @@ bool PairingAgent::requestDefaultAgent() {
         LOG_ERROR << TAG_PAIRINGAGENT << "requestDefaultAgentFailed, reason: " << error.getMessage();
         return false;
     }
+
     return true;
 }
 
@@ -196,6 +197,7 @@ bool PairingAgent::registerAgent() {
         LOG_ERROR << TAG_PAIRINGAGENT << "registerAgentFailed, reason: " << error.getMessage();
         return false;        
     }
+
     return true;
 }
 
@@ -208,9 +210,10 @@ bool PairingAgent::unregisterAgent() {
         LOG_ERROR << TAG_PAIRINGAGENT << "unregisterAgentFailed, reason: " << error.getMessage();
         return false;
     }
-    return true;   
+
+    return true;
 }
 
 } // namespace blueZ
-} // namespce bluetoothDevice
+} // namespace bluetoothDevice
 } // namespace deviceClientSDK

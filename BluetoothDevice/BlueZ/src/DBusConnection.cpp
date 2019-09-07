@@ -9,7 +9,7 @@ namespace blueZ {
 
 using namespace common::utils::logger;
 
-#define TAG_DBUSCONNECTION          "DBusConnection\t"
+#define TAG_DBUSCONNECTION              "DBusConnection\t"
 
 GDBusConnection* DBusConnection::getGDBusConnection() {
     return m_connection;
@@ -36,22 +36,22 @@ unsigned int DBusConnection::subcribeToSignal(
     const char* firstArgumentFilter,
     GDBusSignalCallback callback,
     gpointer userData) {
-    if(nullptr == serviceName) {
+    if(serviceName == nullptr) {
         LOG_ERROR << TAG_DBUSCONNECTION << "subcribeToSignalFailed, reason: serviceName is null";
         return 0;
     }
     
-    if(nullptr == interfaceName) {
+    if(interfaceName == nullptr) {
         LOG_ERROR << TAG_DBUSCONNECTION << "subcribeToSignalFailed, reason: interfaceName is null";
         return 0;
     }
 
-    if(nullptr == member) {
+    if(member == nullptr) {
         LOG_ERROR << TAG_DBUSCONNECTION << "subcribeToSignalFailed, reason: member is null";
         return 0;
     }
 
-    if(nullptr == callback) {
+    if(callback == nullptr) {
         LOG_ERROR << TAG_DBUSCONNECTION << "subcribeToSignalFailed, reason: callback is null";
         return 0;
     }
@@ -67,7 +67,7 @@ unsigned int DBusConnection::subcribeToSignal(
         callback,
         userData,
         nullptr);
-    if(0 == subId) {
+    if(subId == 0) {
         LOG_ERROR << TAG_DBUSCONNECTION << "subsribeToSignalFailed, reason: failed to subscribe";
         return 0;
     }
